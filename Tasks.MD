@@ -17,49 +17,51 @@
 
 ## PHOENIX - Research System + Patterns
 
-### Priority 1: Research Core
-- [ ] Create `Researcher` interface with methods:
+### Priority 1: Research Core - DONE
+- [x] Create `Researcher` interface with methods:
   - `printPapers(Comparator c)` - print papers sorted by comparator
   - `calculateHIndex()` - calculate h-index
   - `getResearchPapers()`, `getResearchProjects()`
-- [ ] Create `ResearchPaper` class:
+- [x] Create `ResearchPaper` class:
   - Fields: title, authors (List), journal, pages, date, doi, citations, volume, number
   - `getCitation(Format f)` - return Plain Text or BibTeX format
   - Implement Comparable (by date default)
-- [ ] Create `ResearchProject` class:
+- [x] Create `ResearchProject` class:
   - Fields: topic, publishedPapers (List), participants (List)
   - Throw `NotResearcherException` if non-Researcher tries to join
-- [ ] Create comparators: `PaperByDate`, `PaperByCitations`, `PaperByPages`
-- [ ] Print all research papers of all researchers in university (sorted)
-- [ ] Print top cited researcher of school / of year
+- [x] Create comparators: `PaperByDate`, `PaperByCitations`, `PaperByPages`
+- [x] Print all research papers of all researchers in university (sorted)
+- [x] Print top cited researcher of school / of year
 
-### Priority 2: GraduateStudent
-- [ ] Create `GraduateStudent extends Student`:
+### Priority 2: GraduateStudent - DONE
+- [x] Create `GraduateStudent extends Student`:
   - Fields: researchSupervisor (Researcher), diplomaProject
   - Implement `Researcher` interface
   - Master and PhD students ARE always researchers
-- [ ] Create `DiplomaProject` class:
+- [x] Create `DiplomaProject` class:
   - Fields: title, publishedPapers (List<ResearchPaper>)
-- [ ] Throw `InvalidSupervisorException` if supervisor h-index < 3
+- [x] Throw `InvalidSupervisorException` if supervisor h-index < 3
 
 ### Priority 3: Design Patterns (4+ required)
-- [ ] Singleton - already in Database (done)
-- [ ] Factory - already in UserFactory (done)
+- [x] Singleton - already in Database (done)
+- [x] Factory - already in UserFactory (done)
 - [ ] Observer - for journal subscriptions (see derdiedasx tasks)
 - [ ] Decorator - make Researcher work as decorator for Teacher/Student/Employee
   OR just use interface approach (decide with team)
 
-### Priority 4: Custom Exceptions
-- [ ] `InvalidSupervisorException` (h-index < 3)
-- [ ] `NotResearcherException` (non-researcher joins research project)
-- [ ] `CreditLimitExceededException` (student > 21 credits)
-- [ ] `MaxFailException` (student failed > 3 times)
+### Priority 4: Custom Exceptions - DONE
+- [x] `InvalidSupervisorException` (h-index < 3)
+- [x] `NotResearcherException` (non-researcher joins research project)
+- [x] `CreditLimitExceededException` (student > 21 credits)
+- [x] `MaxFailException` (student failed > 3 times)
 
-### Priority 5: Fix Bugs in Existing Code
-- [ ] Fix `==` string comparison to `.equals()` in User.login()
-- [ ] Fix `==` string comparison in Mark.convertToGPA()
-- [ ] Fill in empty Lesson class (constructors, getters, setters)
-- [ ] Fill in empty Transcript class
+### Priority 5: Fix Bugs in Existing Code - DONE
+- [x] Fix `==` string comparison to `.equals()` in User.login()
+- [x] Fix `==` string comparison in Mark.convertToGPA()
+- [x] Fix User.login() not resetting isLogged on wrong credentials
+- [x] Fix User.changePassword() - now takes oldPassword and newPassword
+- [x] Fill in empty Lesson class (constructors, getters, setters)
+- [ ] Fill in empty Transcript class (assigned to itachi8539)
 
 ---
 
