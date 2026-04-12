@@ -24,9 +24,7 @@ public abstract class User implements Comparable<Object>{
 	 * to login
 	 */
 	public boolean login(String username, String password) {
-		if (username == this.username && password == this.password) {
-			isLogged = true;
-		}
+		isLogged = username.equals(this.username) && password.equals(this.password);
 		return isLogged;
 	}
 	
@@ -41,9 +39,9 @@ public abstract class User implements Comparable<Object>{
 	/**
 	 * we can change password
 	 */
-	public void changePassword(String password) {
-		if (password == this.password) {
-			setPassword(password);
+	public void changePassword(String oldPassword, String newPassword) {
+		if (oldPassword.equals(this.password)) {
+			setPassword(newPassword);
 		}
 	}
 	
