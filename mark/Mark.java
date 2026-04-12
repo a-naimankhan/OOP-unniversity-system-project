@@ -91,18 +91,18 @@ public class Mark implements Serializable{
 	public double convertToGPA() {
 		String letterMark = this.convertToLetterMark();
 		double gpa;
-		if (letterMark == "A") gpa = 4.00;
-		else if (letterMark == "A-") gpa = 3.67;
-		else if (letterMark == "B+") gpa = 3.33;
-		else if (letterMark == "B") gpa = 3.00;
-		else if (letterMark == "B-") gpa = 2.67;
-		else if (letterMark == "C+") gpa = 2.33;
-		else if (letterMark == "C") gpa = 2.00;
-		else if (letterMark == "C-") gpa = 1.67;
-		else if (letterMark == "D+") gpa = 1.33;
-		else if (letterMark == "D") gpa = 1.00;
+		if (letterMark.equals("A")) gpa = 4.00;
+		else if (letterMark.equals("A-")) gpa = 3.67;
+		else if (letterMark.equals("B+")) gpa = 3.33;
+		else if (letterMark.equals("B")) gpa = 3.00;
+		else if (letterMark.equals("B-")) gpa = 2.67;
+		else if (letterMark.equals("C+")) gpa = 2.33;
+		else if (letterMark.equals("C")) gpa = 2.00;
+		else if (letterMark.equals("C-")) gpa = 1.67;
+		else if (letterMark.equals("D+")) gpa = 1.33;
+		else if (letterMark.equals("D")) gpa = 1.00;
 		else gpa = 0;
-		
+
 		return gpa;
 	}
 	@Override
