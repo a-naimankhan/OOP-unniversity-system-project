@@ -162,7 +162,7 @@
 |            |                                  | LogAction, all Demo classes                           |
 
 ## Deadline Notes
-- Part A (UML diagrams): 14th week
-- Part B (classes draft): 15th week
-- Part C (demo + final): final exam
+- Part A (UML diagrams): 14th week - Айбар
+- Part B (classes draft): 15th week - Алмас
+- Part C (demo + final): final exam - Саша
 - Focus first on: course registration, marks, research (MOST IMPORTANT)
