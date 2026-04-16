@@ -48,13 +48,15 @@
 - [x] Fixed changePassword() — now takes old + new password
 - [x] Filled empty Lesson class
 
-### Priority 5: Still TODO
-- [ ] Add method to print ALL research papers of ALL researchers in university (sorted)
-  - static method in Database or separate utility class
-- [ ] Add method to get top cited researcher of a school
-- [ ] Add method to get top cited researcher of the year (among all schools)
+### Priority 5 TODO
+- [x] Add method to print ALL research papers of ALL researchers in university (sorted)
+  - `Database.printAllResearchPapers(Comparator)` + `Database.getAllResearchers()`
+- [x] Add method to get top cited researcher of a school
+  - `Database.getTopCitedResearcherOfSchool(FacultyType)`
+- [x] Add method to get top cited researcher (among all)
+  - `Database.getTopCitedResearcher()`
 - [ ] Think about Decorator pattern for Researcher
-  (currently Researcher is an interface — this works, but Decorator is an option)
+
 
 ---
 
