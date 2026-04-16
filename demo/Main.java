@@ -160,6 +160,24 @@ public class Main {
 		grad.setDiplomaProject(diploma);
 		System.out.println(grad.getDiplomaProject());
 
+		// --- Print ALL papers of ALL researchers ---
+		System.out.println("\n=== All University Research Papers (by citations) ===");
+		Database.printAllResearchPapers(new PaperByCitations());
+
+		// --- Top cited researcher ---
+		System.out.println("\n=== Top Cited Researcher ===");
+		research.Researcher topResearcher = Database.getTopCitedResearcher();
+		if (topResearcher != null) {
+			System.out.println("Top cited: " + ((User) topResearcher).getFullName()
+					+ " (h-index: " + topResearcher.calculateHIndex() + ")");
+		}
+
+		// --- Top cited of school ---
+		research.Researcher topFIT = Database.getTopCitedResearcherOfSchool(FacultyType.FIT);
+		if (topFIT != null) {
+			System.out.println("Top cited in FIT: " + ((User) topFIT).getFullName());
+		}
+
 		// --- Login test ---
 		System.out.println("\n=== Login Test ===");
 		System.out.println("Login aidar/student1: " + s1.login("aidar", "student1"));

@@ -8,11 +8,17 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Vector;
 
 import course.Course;
 import mark.Mark;
 import other.News;
+import research.Researcher;
+import research.ResearchPaper;
 
 public final class Database implements Serializable{
 
@@ -47,6 +53,83 @@ public final class Database implements Serializable{
 	public static Vector<News> news = new Vector<News>();
 	public static Vector<String> comments = new Vector<String>();
 
+
+	/**
+	 * Collects all researchers from users list
+	 */
+	public static List<Researcher> getAllResearchers() {
+		List<Researcher> researchers = new ArrayList<>();
+		for (User u : users) {
+			if (u instanceof Researcher) {
+				researchers.add((Researcher) u);
+			}
+		}
+		return researchers;
+	}
+
+	/**
+	 * Prints ALL research papers of ALL researchers in the university, sorted by given comparator
+	 */
+	public static void printAllResearchPapers(Comparator<ResearchPaper> c) {
+		List<ResearchPaper> allPapers = new ArrayList<>();
+		for (Researcher r : getAllResearchers()) {
+			for (ResearchPaper p : r.getResearchPapers()) {
+				if (!allPapers.contains(p)) {
+					allPapers.add(p);
+				}
+			}
+		}
+		Collections.sort(allPapers, c);
+		System.out.println("=== All Research Papers (" + allPapers.size() + ") ===");
+		for (ResearchPaper p : allPapers) {
+			System.out.println(p);
+		}
+	}
+
+	/**
+	 * Returns top cited researcher among all users
+	 */
+	public static Researcher getTopCitedResearcher() {
+		Researcher top = null;
+		int maxCitations = 0;
+		for (Researcher r : getAllResearchers()) {
+			int total = 0;
+			for (ResearchPaper p : r.getResearchPapers()) {
+				total += p.getCitations();
+			}
+			if (total > maxCitations) {
+				maxCitations = total;
+				top = r;
+			}
+		}
+		return top;
+	}
+
+	/**
+	 * Returns top cited researcher of a specific school/faculty
+	 */
+	public static Researcher getTopCitedResearcherOfSchool(FacultyType faculty) {
+		Researcher top = null;
+		int maxCitations = 0;
+		for (Researcher r : getAllResearchers()) {
+			// check faculty
+			FacultyType rFaculty = null;
+			if (r instanceof Student) rFaculty = ((Student) r).getFaculty();
+			else if (r instanceof Teacher) rFaculty = ((Teacher) r).getDepartment();
+
+			if (rFaculty == faculty) {
+				int total = 0;
+				for (ResearchPaper p : r.getResearchPapers()) {
+					total += p.getCitations();
+				}
+				if (total > maxCitations) {
+					maxCitations = total;
+					top = r;
+				}
+			}
+		}
+		return top;
+	}
 
 	public static void save() {
 		serializeUser();
