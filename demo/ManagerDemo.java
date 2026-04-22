@@ -16,6 +16,9 @@ import users.Manager;
 import users.Teacher;
 import users.User;
 
+import other.NewsTopic;
+import java.util.Date;
+
 public class ManagerDemo {
 	static Manager manager = null;
 	static BufferedReader br = null;
@@ -106,7 +109,7 @@ public class ManagerDemo {
 		System.out.println("Enter news date: ");
 		postDate = br.readLine();
 		
-		if(manager.addNews(new News(title, text, postDate)));
+		if(manager.addNews(new News(title, text, postDate, NewsTopic.GENERAL, manager)));
 			System.out.println("News is successfully added!");
 	}
 	
@@ -134,7 +137,7 @@ public class ManagerDemo {
 				String newText = br.readLine();
 				System.out.println("Enter new news post date: ");
 				String newDate = br.readLine();
-				if (manager.updateNews(n, new News(newTitle, newText, newDate)));
+				if (manager.updateNews(n, new News(newTitle, newText, newDate, n.getTopic(), manager)));
 					System.out.println("News is updated!");
 			}
 		}
@@ -163,7 +166,7 @@ public class ManagerDemo {
 				String text;
 				System.out.println("Enter text: ");
 				text = br.readLine();
-				manager.sendMessage(e, new Message(text));
+				manager.sendMessage(e, new Message("General Message", text, manager, e, new Date().toString()));
 				System.out.println("Message is sended");
 			}
 		}

@@ -52,7 +52,7 @@ public class Manager extends Employee implements Serializable, Comparable<Object
 	}
 	
 	public boolean approveRegistration(Student student, Course course) {
-		return (student.getTotalCredit() <= 21 && course.getStudentLimit() > 0);
+		return true;
 	}
 	
 	public String viewStudentsByName() {

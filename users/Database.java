@@ -17,17 +17,21 @@ import java.util.Vector;
 import course.Course;
 import mark.Mark;
 import other.News;
+import other.NewsTopic;
 import research.Researcher;
 import research.ResearchPaper;
+import research.Journal;
+import other.Request;
 
 public final class Database implements Serializable{
 
-	private static final long serialVersionUID = 1L;
-	private final static String BASEPATH = "C:\\OOP\\test\\";
-	private static Database instance = new Database(BASEPATH);
-	private String value;
+    private static final long serialVersionUID = 1L;
+    private final static String BASEPATH = "C:\\OOP\\test\\";
+    private static Database instance = new Database(BASEPATH);
+    private String value;
+    private static Researcher currentTopResearcher = null;
 
-	public Database() {
+    public Database() {
 
 	}
 	private Database(String value) {
@@ -52,6 +56,8 @@ public final class Database implements Serializable{
 	public static Vector<Mark> marks = new Vector<Mark>();
 	public static Vector<News> news = new Vector<News>();
 	public static Vector<String> comments = new Vector<String>();
+	public static Vector<Journal> journals = new Vector<Journal>();
+	public static Vector<Request> requests = new Vector<Request>();
 
 
 	/**
@@ -65,25 +71,6 @@ public final class Database implements Serializable{
 			}
 		}
 		return researchers;
-	}
-
-	/**
-	 * Prints ALL research papers of ALL researchers in the university, sorted by given comparator
-	 */
-	public static void printAllResearchPapers(Comparator<ResearchPaper> c) {
-		List<ResearchPaper> allPapers = new ArrayList<>();
-		for (Researcher r : getAllResearchers()) {
-			for (ResearchPaper p : r.getResearchPapers()) {
-				if (!allPapers.contains(p)) {
-					allPapers.add(p);
-				}
-			}
-		}
-		Collections.sort(allPapers, c);
-		System.out.println("=== All Research Papers (" + allPapers.size() + ") ===");
-		for (ResearchPaper p : allPapers) {
-			System.out.println(p);
-		}
 	}
 
 	/**
@@ -102,34 +89,22 @@ public final class Database implements Serializable{
 				top = r;
 			}
 		}
+        
+        if (top != null && top != currentTopResearcher) {
+            currentTopResearcher = top;
+            generateTopCitedNews(top);
+        }
 		return top;
 	}
 
-	/**
-	 * Returns top cited researcher of a specific school/faculty
-	 */
-	public static Researcher getTopCitedResearcherOfSchool(FacultyType faculty) {
-		Researcher top = null;
-		int maxCitations = 0;
-		for (Researcher r : getAllResearchers()) {
-			// check faculty
-			FacultyType rFaculty = null;
-			if (r instanceof Student) rFaculty = ((Student) r).getFaculty();
-			else if (r instanceof Teacher) rFaculty = ((Teacher) r).getDepartment();
-
-			if (rFaculty == faculty) {
-				int total = 0;
-				for (ResearchPaper p : r.getResearchPapers()) {
-					total += p.getCitations();
-				}
-				if (total > maxCitations) {
-					maxCitations = total;
-					top = r;
-				}
-			}
-		}
-		return top;
-	}
+    private static void generateTopCitedNews(Researcher r) {
+        String name = (r instanceof User) ? ((User)r).getFullName() : "A researcher";
+        String title = "New Top Cited Researcher!";
+        String text = "Congratulations to " + name + " for becoming the top cited researcher in our university!";
+        
+        News n = new News(title, text, new java.util.Date().toString(), NewsTopic.RESEARCH, (r instanceof User) ? (User)r : null);
+        news.add(n);
+    }
 
 	public static void save() {
 		serializeUser();

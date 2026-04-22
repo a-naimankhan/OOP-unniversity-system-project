@@ -4,12 +4,15 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Comparator;
 
 import course.Course;
 import mark.AttestationType;
 import mark.Mark;
 
-public class Student extends User implements Serializable, Comparable<Object>{
+public class Student extends User implements Serializable, Comparable<Object> {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -39,23 +42,16 @@ public class Student extends User implements Serializable, Comparable<Object>{
 		this.speciality = speciality;
 	}
 	
-	
 	public boolean registerCourse(Course course) {
-		Manager manager = new Manager();
 		if (Database.courses.contains(course)) {
-			if (!marks.containsKey(course) && (course.getPrerequisites() == null || (marks.containsKey(course.getPrerequisites()) && this.getMarks().get(course.getPrerequisites()).getFinalAttestation() >= 50))) {
-				if ((this.faculty == course.getDepartment()) || (this.faculty != course.getDepartment() && course.isElective())) {
-					marks.put(course, new Mark(0, AttestationType.FIRST));
-					setTotalCredit(this.totalCredit + course.getCredit());
-					course.setStudentLimit(course.getStudentLimit() - 1);
-					return manager.approveRegistration(this, course);
-				}
-				return false;
+			if (this.totalCredit + course.getCredit() <= creditLimit) {
+				marks.put(course, new Mark());
+				setTotalCredit(this.totalCredit + course.getCredit());
+				return true;
 			}
-			return false;
 		}
 		return false;
-	}	
+	}
 	
 	public boolean dropCourse(Course course) {
 		if(this.getMarks().get(course).getFinalAttestation() == 0) {

@@ -20,7 +20,7 @@ public class Main {
 		admin.addUser(admin);
 
 		Teacher prof = new Teacher("Dr. Almas Bekov", "almas", "pass123", 800000,
-				DegreeTeacher.PROFFESSOR, FacultyType.FIT);
+				DegreeTeacher.PROFESSOR, FacultyType.FIT);
 		admin.addUser(prof);
 
 		Teacher lecturer = new Teacher("Mr. Sanzhar Aitov", "sanzhar", "pass456", 400000,
@@ -160,10 +160,6 @@ public class Main {
 		grad.setDiplomaProject(diploma);
 		System.out.println(grad.getDiplomaProject());
 
-		// --- Print ALL papers of ALL researchers ---
-		System.out.println("\n=== All University Research Papers (by citations) ===");
-		Database.printAllResearchPapers(new PaperByCitations());
-
 		// --- Top cited researcher ---
 		System.out.println("\n=== Top Cited Researcher ===");
 		research.Researcher topResearcher = Database.getTopCitedResearcher();
@@ -172,18 +168,12 @@ public class Main {
 					+ " (h-index: " + topResearcher.calculateHIndex() + ")");
 		}
 
-		// --- Top cited of school ---
-		research.Researcher topFIT = Database.getTopCitedResearcherOfSchool(FacultyType.FIT);
-		if (topFIT != null) {
-			System.out.println("Top cited in FIT: " + ((User) topFIT).getFullName());
-		}
-
-		// --- Login test ---
+		// --- Login Test ---
 		System.out.println("\n=== Login Test ===");
 		System.out.println("Login aidar/student1: " + s1.login("aidar", "student1"));
 		System.out.println("Login aidar/wrong: " + s1.login("aidar", "wrong"));
 
-		// --- View info ---
+		// --- Manager View ---
 		System.out.println("\n=== Manager View ===");
 		System.out.println(manager.viewStudentsByName());
 		System.out.println(manager.viewTeachersByName());
