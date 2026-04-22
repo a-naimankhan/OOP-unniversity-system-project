@@ -2,14 +2,18 @@ package users;
 
 import java.io.Serializable;
 import java.util.Objects;
-
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Comparator;
 
 import course.Course;
 import mark.AttestationType;
 import mark.Mark;
 import other.Time;
+import other.Complaint;
+import other.UrgencyLevel;
 
-public class Teacher extends Employee implements Serializable, Comparable<Object>{
+public class Teacher extends Employee implements Serializable, Comparable<Object> {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -20,7 +24,6 @@ public class Teacher extends Employee implements Serializable, Comparable<Object
 	private Time officeHour;
 	
 	public Teacher() {
-		
 	}
 	public Teacher(String fullName, String username, String password, int salary, DegreeTeacher degree, FacultyType department) {
 		super(fullName, username, password, salary);
@@ -29,6 +32,13 @@ public class Teacher extends Employee implements Serializable, Comparable<Object
 		this.rating = 0;
 		this.ratedCnt = 0;
 	}
+
+    public void sendComplaint(Student student, String text, UrgencyLevel urgency, User dean) {
+        Complaint c = new Complaint(text, this, dean, new java.util.Date().toString(), student, urgency);
+        dean.update("NEW COMPLAINT from " + this.getFullName() + " about student " + student.getFullName());
+        // In a real system, you'd add this to some message vector in Database
+        System.out.println("Complaint sent successfully.");
+    }
 
 	
 	public boolean putMark(Course course, Student student, double point, AttestationType period) {
