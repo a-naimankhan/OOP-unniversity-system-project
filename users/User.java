@@ -2,24 +2,65 @@ package users;
 
 import java.util.Objects;
 import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import other.News;
+import other.Language;
+import other.LanguageManager;
+import research.Observer;
+import research.Journal;
 
-public abstract class User implements Comparable<Object>{
+public abstract class User implements Comparable<Object>, Observer {
 	private String fullName;
 	private String username;
 	private String password;
 	private boolean isLogged;
+    private List<String> notifications;
+    private Language language;
 	
 	public User() {
-		
+		this.notifications = new ArrayList<>();
+        this.language = Language.EN; // Default language
 	}
 	public User(String fullName, String username, String password) {
 		this.fullName = fullName;
 		this.username = username;
 		this.password = password;
+        this.notifications = new ArrayList<>();
+        this.language = Language.EN; // Default language
 	}
+
+    public Language getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(Language language) {
+        this.language = language;
+    }
+
+    public String getTranslatedText(String key) {
+        return LanguageManager.getTranslation(key, this.language);
+    }
+
+    public void subscribeToJournal(Journal journal) {
+        journal.subscribe(this);
+    }
+
+    public void unsubscribeFromJournal(Journal journal) {
+        journal.unsubscribe(this);
+    }
 	
+    @Override
+    public void update(String message) {
+        notifications.add(message);
+        System.out.println("[NOTIFICATION for " + fullName + "]: " + message);
+    }
+
+    public List<String> getNotifications() {
+        return notifications;
+    }
+
 	/**
 	 * to login
 	 */
