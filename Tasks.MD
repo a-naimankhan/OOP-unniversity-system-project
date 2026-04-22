@@ -62,40 +62,40 @@
 
 ## DERDIEDASX - News, Journals, TechSupport, Messages
 
-### Priority 1: News System
-- [ ] Upgrade `News` class:
+### Priority 1: News System - DONE
+- [x] Upgrade `News` class:
   - Add: topic (enum: RESEARCH, ACADEMIC, GENERAL), comments (List), author, pinned (boolean)
-  - Research news must be pinned/prioritized
-- [ ] Auto-generate news when researcher publishes paper
-- [ ] Auto-generate news about top cited researcher
-- [ ] Comments on news
+- [x] Research news must be pinned/prioritized
+- [x] Auto-generate news when researcher publishes paper
+- [x] Auto-generate news about top cited researcher
+- [x] Comments on news
 
-### Priority 2: University Journals + Observer Pattern
-- [ ] `Journal` class (name, publishedPapers, subscribers)
-- [ ] Observer pattern:
+### Priority 2: University Journals + Observer Pattern - DONE
+- [x] `Journal` class (name, publishedPapers, subscribers)
+- [x] Observer pattern:
   - `Subject` interface for Journal
   - `Observer` interface for User (subscribers)
   - `subscribe()`, `unsubscribe()`, `notifySubscribers()`
-- [ ] All users can subscribe (not only researchers)
-- [ ] Notify when new paper published
+- [x] All users can subscribe (not only researchers)
+- [x] Notify when new paper published
 
-### Priority 3: TechSupportSpecialist
-- [ ] `TechSupportSpecialist extends Employee`
-- [ ] `Request` class (description, status, createdBy)
-- [ ] `RequestStatus` enum: **VIEWED, ACCEPTED, REJECTED, DONE**
+### Priority 3: TechSupportSpecialist - DONE
+- [x] `TechSupportSpecialist extends Employee`
+- [x] `Request` class (description, status, createdBy)
+- [x] `RequestStatus` enum: **VIEWED, ACCEPTED, REJECTED, DONE**
   (after specialist sees it → VIEWED, then ACCEPTED/REJECTED, then DONE)
-- [ ] View new/accepted/done requests
+- [x] View new/accepted/done requests
 
-### Priority 4: Message System
-- [ ] Upgrade `Message` (add: sender, receiver, date, subject)
-- [ ] `Complaint extends Message` + `UrgencyLevel` enum (LOW, MEDIUM, HIGH)
-- [ ] Teacher.sendComplaint(Student, UrgencyLevel) to dean
-- [ ] Working official messages (служебные записки) — booking rooms for exams, etc.
+### Priority 4: Message System - DONE
+- [x] Upgrade `Message` (add: sender, receiver, date, subject)
+- [x] `Complaint extends Message` + `UrgencyLevel` enum (LOW, MEDIUM, HIGH)
+- [x] Teacher.sendComplaint(Student, UrgencyLevel) to dean
+- [x] Working official messages (служебные записки) — booking rooms for exams, etc.
 
-### Priority 5: Language Support
-- [ ] `Language` enum (KZ, EN, RU)
-- [ ] Language field in User
-- [ ] Menu text in 3 languages
+### Priority 5: Language Support - DONE
+- [x] `Language` enum (KZ, EN, RU)
+- [x] Language field in User
+- [x] Menu text in 3 languages (LanguageManager)
 
 ---
 
