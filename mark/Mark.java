@@ -72,17 +72,19 @@ public class Mark implements Serializable{
 	}
 	
 	public String convertToLetterMark() {
+		// use calculated sum, not the raw field (field defaults to 0)
+		double total = getFinalAttestation();
 		String letterMark;
-		if (finalAttestation >= 95 && finalAttestation <= 100) letterMark = "A";
-		else if (finalAttestation >= 90 && finalAttestation <= 94) letterMark = "A-";
-		else if (finalAttestation >= 85 && finalAttestation <= 89) letterMark = "B+";
-		else if (finalAttestation >= 80 && finalAttestation <= 84) letterMark = "B";
-		else if (finalAttestation >= 75 && finalAttestation <= 79) letterMark = "B-";
-		else if (finalAttestation >= 70 && finalAttestation <= 74) letterMark = "C+";
-		else if (finalAttestation >= 65 && finalAttestation <= 69) letterMark = "C";
-		else if (finalAttestation >= 60 && finalAttestation <= 64) letterMark = "C-";
-		else if (finalAttestation >= 55 && finalAttestation <= 59) letterMark = "D+";
-		else if (finalAttestation >= 50 && finalAttestation <= 54) letterMark = "D";
+		if (total >= 95 && total <= 100) letterMark = "A";
+		else if (total >= 90 && total <= 94) letterMark = "A-";
+		else if (total >= 85 && total <= 89) letterMark = "B+";
+		else if (total >= 80 && total <= 84) letterMark = "B";
+		else if (total >= 75 && total <= 79) letterMark = "B-";
+		else if (total >= 70 && total <= 74) letterMark = "C+";
+		else if (total >= 65 && total <= 69) letterMark = "C";
+		else if (total >= 60 && total <= 64) letterMark = "C-";
+		else if (total >= 55 && total <= 59) letterMark = "D+";
+		else if (total >= 50 && total <= 54) letterMark = "D";
 		else letterMark = "F";
 		
 		return letterMark;
