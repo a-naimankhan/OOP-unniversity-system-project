@@ -11,6 +11,7 @@ import java.util.Comparator;
 import course.Course;
 import mark.AttestationType;
 import mark.Mark;
+import exceptions.MaxFailException;
 
 public class Student extends User implements Serializable, Comparable<Object> {
 	
@@ -25,9 +26,13 @@ public class Student extends User implements Serializable, Comparable<Object> {
 	private String speciality;
 	private int totalCredit;
 	private HashMap<Course, Mark> marks;
+	private List<StudentOrganization> organizations;
+	private HashMap<Course, Integer> failCount;
 	
 	{
 		marks = new HashMap<Course, Mark>();
+		organizations = new ArrayList<StudentOrganization>();
+		failCount = new HashMap<Course, Integer>();
 	}
 	
 	public Student() {
@@ -42,8 +47,12 @@ public class Student extends User implements Serializable, Comparable<Object> {
 		this.speciality = speciality;
 	}
 	
-	public boolean registerCourse(Course course) {
+	public boolean registerCourse(Course course) throws MaxFailException {
 		if (Database.courses.contains(course)) {
+			int fails = failCount.getOrDefault(course, 0);
+			if (fails >= 3) {
+				throw new MaxFailException("Cannot register for " + course.getCourseName() + ": failed 3 or more times.");
+			}
 			if (this.totalCredit + course.getCredit() <= creditLimit) {
 				marks.put(course, new Mark());
 				setTotalCredit(this.totalCredit + course.getCredit());
@@ -153,6 +162,18 @@ public class Student extends User implements Serializable, Comparable<Object> {
 		if (organizations.contains(org)) {
 			org.setHead(this);
 		}
+	}
+	
+	public void incrementFailCount(Course course) {
+		failCount.put(course, failCount.getOrDefault(course, 0) + 1);
+	}
+	
+	public int getFailCount(Course course) {
+		return failCount.getOrDefault(course, 0);
+	}
+	
+	public HashMap<Course, Integer> getFailCountMap() {
+		return failCount;
 	}
 	
 	@Override
