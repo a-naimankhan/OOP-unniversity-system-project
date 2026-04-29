@@ -150,7 +150,12 @@ public class Student extends User implements Serializable, Comparable<Object> {
 	public void setMarks(HashMap<Course, Mark> marks) {
 		this.marks = marks;
 	}
-	
+
+	public void joinOrganization(StudentOrganization org) {
+		organizations.add(org);
+		org.getMembers().add(this);
+	}
+
 	public void leaveOrganization(StudentOrganization org) {
 		if (organizations.contains(org)) {
 			organizations.remove(org);
