@@ -96,13 +96,7 @@ public class Teacher extends Employee implements Serializable, Comparable<Object
 		this.department = department;
 	}
 	public double getRating() {
-		try{
-			return rating / ratedCnt;
-    	}
-    	catch(ArithmeticException a){
-    		System.out.println("Not rated");
-    		a.printStackTrace();
-    	}
+		if (ratedCnt == 0) return 0;
 		return rating / ratedCnt;
 	}
 	public void setRating(double rating) {
