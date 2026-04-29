@@ -82,13 +82,13 @@
 
 ### ❌ Приоритет 1: Student — НЕ СДЕЛАНО
 
-- [ ] `StudentOrganization` класс (name, String role, List<Student> members, Student head)
+- [x] `StudentOrganization` класс (name, String role, List<Student> members, Student head)
   - Student должен иметь `List<StudentOrganization> organizations`
   - Методы: `joinOrganization()`, `leaveOrganization()`, `becomeHead()`
-- [ ] Ограничение: студент не может провалить курс более 3 раз
+- [x] Ограничение: студент не может провалить курс более 3 раз
   - В `Student`: добавить `Map<Course, Integer> failCount`
   - В `registerCourse()`: если студент уже падал курс 3 раза → бросить `MaxFailException`
-- [ ] `CourseType` enum: MAJOR, MINOR, FREE_ELECTIVE
+- [x] `CourseType` enum: MAJOR, MINOR, FREE_ELECTIVE
   - Добавить поле `CourseType courseType` в класс `Course`
   - Убрать/заменить boolean `isElective`
 
