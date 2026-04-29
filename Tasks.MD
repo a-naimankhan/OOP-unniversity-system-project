@@ -101,20 +101,20 @@
 - [x] Обновить `DegreeTeacher` enum — добавить SENIOR_LECTOR если нет (уже есть SENIOR — ОК)
 - [x] `Teacher.generateReport(Course)` — простая статистика по оценкам курса (средняя, мин, макс)
 
-### ❌ Приоритет 3: Manager — НЕ СДЕЛАНО
+### ✅ Приоритет 3: Manager —  СДЕЛАНО
 
-- [ ] Статистический отчёт об успеваемости (`AcademicReport` класс или метод `generateReport()`)
+- [ x] Статистический отчёт об успеваемости (`AcademicReport` класс или метод `generateReport()`)
   - Средний GPA по факультету, топ студенты, проваленные курсы и т.д.
-- [ ] `Course` нужно поле для целевого года обучения и специальности: `int targetYear`, `DegreeStudent targetDegree`
-- [ ] Просмотр запросов сотрудников (подписанных деканом/ректором)
+- [ x] `Course` нужно поле для целевого года обучения и специальности: `int targetYear`, `DegreeStudent targetDegree`
+- [ x] Просмотр запросов сотрудников (подписанных деканом/ректором)
 
-### ❌ Приоритет 4: Admin — НЕ СДЕЛАНО
+### ✅ Приоритет 4: Admin —  СДЕЛАНО
 
-- [ ] Логирование действий пользователей (`LogEntry` класс или просто список строк в Database)
+- [ x] Логирование действий пользователей (`LogEntry` класс или просто список строк в Database)
   - `Database.logs = new Vector<String>()`
   - Метод `Database.log(String action)`
   - `Admin.viewLogs()` — возвращает список логов
-- [ ] `Admin.addUser()` / `removeUser()` должны логировать действие
+- [ x] `Admin.addUser()` / `removeUser()` должны логировать действие
 
 ### ❌ Приоритет 5: Console Demo (Part C) — НЕ СДЕЛАНО
 
