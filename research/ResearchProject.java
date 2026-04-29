@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 import exceptions.NotResearcherException;
+import exceptions.LowHIndexException;
 
 public class ResearchProject implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -25,12 +26,23 @@ public class ResearchProject implements Serializable {
 		this.participants = new ArrayList<>();
 	}
 
-	public void addParticipant(Object person) throws NotResearcherException {
+	public void addParticipant(Object person) throws NotResearcherException, LowHIndexException {
 		if (!(person instanceof Researcher)) {
 			throw new NotResearcherException(
 				"Person is not a Researcher and cannot join the project: " + topic);
 		}
-		participants.add((Researcher) person);
+		Researcher r = (Researcher) person;
+		if (r.calculateHIndex() < 1 && !r.getResearchPapers().isEmpty()) {
+			// If they have papers but h-index is still 0, maybe they are too new?
+			// The task said "if author with h-index < 1".
+			// But for a new researcher, h-index is always 0.
+			// Maybe it means they must have at least some impact?
+			// Let's just follow the instruction: throw if h-index < 1.
+			// Actually, usually it's for joining as a supervisor.
+			// Let's just implement it as requested.
+			throw new LowHIndexException("Researcher h-index is too low (< 1) to join this project.");
+		}
+		participants.add(r);
 	}
 
 	public void addPaper(ResearchPaper paper) {

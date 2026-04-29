@@ -9,6 +9,7 @@ public class Request implements Serializable {
     private String description;
     private RequestStatus status;
     private User createdBy;
+    private User signedBy;
     private String date;
     private UrgencyLevel urgency;
 
@@ -18,6 +19,14 @@ public class Request implements Serializable {
         this.date = date;
         this.urgency = urgency;
         this.status = RequestStatus.NEW;
+    }
+
+    public User getSignedBy() {
+        return signedBy;
+    }
+
+    public void setSignedBy(User signedBy) {
+        this.signedBy = signedBy;
     }
 
     public UrgencyLevel getUrgency() {

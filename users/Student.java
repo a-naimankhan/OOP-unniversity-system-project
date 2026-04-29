@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 import course.Course;
+import exceptions.CreditLimitExceededException;
+import exceptions.MaxFailException;
 import mark.AttestationType;
 import mark.Mark;
 
@@ -25,9 +27,13 @@ public class Student extends User implements Serializable, Comparable<Object> {
 	private String speciality;
 	private int totalCredit;
 	private HashMap<Course, Mark> marks;
+    private HashMap<Course, Integer> failCount;
+    private List<StudentOrganization> organizations;
 	
 	{
 		marks = new HashMap<Course, Mark>();
+        failCount = new HashMap<Course, Integer>();
+        organizations = new ArrayList<StudentOrganization>();
 	}
 	
 	public Student() {
@@ -42,22 +48,34 @@ public class Student extends User implements Serializable, Comparable<Object> {
 		this.speciality = speciality;
 	}
 	
-	public boolean registerCourse(Course course) {
+	public boolean registerCourse(Course course) throws CreditLimitExceededException, MaxFailException {
 		if (Database.courses.contains(course)) {
+            // Check for 3 fails
+            if (failCount.getOrDefault(course, 0) >= 3) {
+                throw new MaxFailException("Cannot register: failed " + course.getCourseName() + " 3 times.");
+            }
+            
 			if (this.totalCredit + course.getCredit() <= creditLimit) {
 				marks.put(course, new Mark());
 				setTotalCredit(this.totalCredit + course.getCredit());
 				return true;
-			}
+			} else {
+                throw new CreditLimitExceededException("Credit limit exceeded! Max: " + creditLimit);
+            }
 		}
 		return false;
 	}
 	
 	public boolean dropCourse(Course course) {
-		if(this.getMarks().get(course).getFinalAttestation() == 0) {
-			marks.remove(course);
-			return true;
-		}
+        if (marks.containsKey(course)) {
+            Mark m = marks.get(course);
+            // Can only drop if no marks are entered yet
+            if (m.getFirstAttestation() == 0 && m.getSecondAttestation() == 0 && m.getExamMark() == 0) {
+                setTotalCredit(this.totalCredit - course.getCredit());
+                marks.remove(course);
+                return true;
+            }
+        }
 		return false;
 	}
 	
@@ -142,6 +160,38 @@ public class Student extends User implements Serializable, Comparable<Object> {
 		this.marks = marks;
 	}
 	
+    public void joinOrganization(StudentOrganization org) {
+        if (!organizations.contains(org)) {
+            organizations.add(org);
+            org.addMember(this);
+        }
+    }
+
+    public void leaveOrganization(StudentOrganization org) {
+        if (organizations.contains(org)) {
+            organizations.remove(org);
+            org.removeMember(this);
+        }
+    }
+
+    public void becomeHead(StudentOrganization org) {
+        if (organizations.contains(org)) {
+            org.setHead(this);
+            org.setRole("Head");
+        }
+    }
+
+    public List<StudentOrganization> getOrganizations() {
+        return organizations;
+    }
+
+    public void addFail(Course course) {
+        failCount.put(course, failCount.getOrDefault(course, 0) + 1);
+    }
+
+    public int getFailCount(Course course) {
+        return failCount.getOrDefault(course, 0);
+    }
 	
 	@Override
 	public String toString() {

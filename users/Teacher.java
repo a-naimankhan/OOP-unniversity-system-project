@@ -96,12 +96,11 @@ public class Teacher extends Employee implements Serializable, Comparable<Object
 		this.department = department;
 	}
 	public double getRating() {
-		if (ratedCnt == 0) return 0;
-		return rating / ratedCnt;
+		return (ratedCnt == 0) ? 0 : rating / ratedCnt;
 	}
 	public void setRating(double rating) {
+		this.rating += rating;
 		this.ratedCnt += 1;
-		this.rating = getRating() + rating;
 	}
 	public Time getOfficeHour() {
 		return officeHour;
@@ -109,6 +108,33 @@ public class Teacher extends Employee implements Serializable, Comparable<Object
 	public void setOfficeHour(Time officeHour) {
 		this.officeHour = officeHour;
 	}
+
+    public String generateReport(Course course) {
+        if (!course.getTeachers().contains(this)) return "You don't teach this course.";
+        
+        double totalSum = 0;
+        double max = 0;
+        double min = 100;
+        int count = 0;
+        
+        for (Student s : Database.students) {
+            if (s.getMarks().containsKey(course)) {
+                double mark = s.getMarks().get(course).getFinalAttestation();
+                totalSum += mark;
+                if (mark > max) max = mark;
+                if (mark < min) min = mark;
+                count++;
+            }
+        }
+        
+        if (count == 0) return "No students registered for " + course.getCourseName();
+        
+        return "Report for " + course.getCourseName() + ":\n" +
+               "Average: " + (totalSum / count) + "\n" +
+               "Max: " + max + "\n" +
+               "Min: " + min + "\n" +
+               "Total students: " + count;
+    }
 	
 	@Override
 	public String toString() {

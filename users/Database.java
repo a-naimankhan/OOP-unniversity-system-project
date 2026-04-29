@@ -18,22 +18,52 @@ import course.Course;
 import mark.Mark;
 import other.News;
 import other.NewsTopic;
+import other.LogEntry;
 import research.Researcher;
 import research.ResearchPaper;
 import research.Journal;
+import research.Observer;
+import research.Subject;
 import other.Request;
 
-public final class Database implements Serializable{
+public final class Database implements Serializable, Subject {
 
     private static final long serialVersionUID = 1L;
     private final static String BASEPATH = "C:\\OOP\\test\\";
     private static Database instance = new Database(BASEPATH);
     private String value;
     private static Researcher currentTopResearcher = null;
+    private List<Observer> logObservers = new ArrayList<>();
 
     public Database() {
 
 	}
+    
+    @Override
+    public void subscribe(Observer observer) {
+        if (!logObservers.contains(observer)) {
+            logObservers.add(observer);
+        }
+    }
+
+    @Override
+    public void unsubscribe(Observer observer) {
+        logObservers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(String message) {
+        for (Observer o : logObservers) {
+            o.update(message);
+        }
+    }
+
+    public static void log(String action, String user) {
+        LogEntry entry = new LogEntry(action, user);
+        logs.add(entry);
+        instance.notifyObservers("LOG: " + entry.toString());
+    }
+
 	private Database(String value) {
 		this.value = value;
 	}
@@ -58,6 +88,7 @@ public final class Database implements Serializable{
 	public static Vector<String> comments = new Vector<String>();
 	public static Vector<Journal> journals = new Vector<Journal>();
 	public static Vector<Request> requests = new Vector<Request>();
+    public static Vector<LogEntry> logs = new Vector<LogEntry>();
 
 
 	/**
@@ -97,6 +128,28 @@ public final class Database implements Serializable{
 		return top;
 	}
 
+    public static Researcher getTopCitedResearcherOfSchool(FacultyType faculty) {
+        Researcher top = null;
+        int maxCitations = 0;
+        for (Researcher r : getAllResearchers()) {
+            FacultyType rFaculty = null;
+            if (r instanceof Student) rFaculty = ((Student)r).getFaculty();
+            else if (r instanceof Teacher) rFaculty = ((Teacher)r).getDepartment();
+            
+            if (rFaculty == faculty) {
+                int total = 0;
+                for (ResearchPaper p : r.getResearchPapers()) {
+                    total += p.getCitations();
+                }
+                if (total > maxCitations) {
+                    maxCitations = total;
+                    top = r;
+                }
+            }
+        }
+        return top;
+    }
+
     private static void generateTopCitedNews(Researcher r) {
         String name = (r instanceof User) ? ((User)r).getFullName() : "A researcher";
         String title = "New Top Cited Researcher!";
@@ -116,6 +169,93 @@ public final class Database implements Serializable{
 		serializeMark();
 		serializeManager();
 		serializeNews();
+        serializeJournals();
+        serializeLogs();
+        serializeRequests();
+	}
+
+    public static void serializeRequests() {
+        try (FileOutputStream fs = new FileOutputStream(BASEPATH + "requests.txt")){
+            ObjectOutputStream oos = new ObjectOutputStream(fs);
+            oos.writeObject(requests);
+            oos.flush();
+            oos.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Vector<Request> deserializeRequests() throws ClassNotFoundException {
+        try (FileInputStream fs = new FileInputStream(BASEPATH + "requests.txt")){
+            ObjectInputStream ois = new ObjectInputStream(fs);
+            @SuppressWarnings("unchecked")
+            Vector<Request> r = (Vector<Request>)ois.readObject();
+            return r;
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        return requests;
+    }
+
+    public static void serializeJournals() {
+        try (FileOutputStream fs = new FileOutputStream(BASEPATH + "journals.txt")){
+            ObjectOutputStream oos = new ObjectOutputStream(fs);
+            oos.writeObject(journals);
+            oos.flush();
+            oos.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void serializeLogs() {
+        try (FileOutputStream fs = new FileOutputStream(BASEPATH + "logs.txt")){
+            ObjectOutputStream oos = new ObjectOutputStream(fs);
+            oos.writeObject(logs);
+            oos.flush();
+            oos.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+	public static Vector<LogEntry> deserializeLogs() throws ClassNotFoundException {
+		try (FileInputStream fs = new FileInputStream(BASEPATH + "logs.txt")){
+			ObjectInputStream ois = new ObjectInputStream(fs);
+			@SuppressWarnings("unchecked")
+			Vector<LogEntry> l = (Vector<LogEntry>)ois.readObject();
+			return l;
+		}
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		return logs;
+	}
+
+	public static Vector<Journal> deserializeJournals() throws ClassNotFoundException {
+		try (FileInputStream fs = new FileInputStream(BASEPATH + "journals.txt")){
+			ObjectInputStream ois = new ObjectInputStream(fs);
+			@SuppressWarnings("unchecked")
+			Vector<Journal> j = (Vector<Journal>)ois.readObject();
+			return j;
+		}
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		return journals;
 	}
 
 	public static void serializeUser() {

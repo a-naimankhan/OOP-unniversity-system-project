@@ -16,11 +16,13 @@ public class Course implements Serializable{
 	private Period semester;
 	private String courseCode;
 	private int credit;
-	private boolean isElective;
+	private CourseType courseType;
 	private int studentLimit;
 	private Course prerequisites;
 	private FacultyType department;
 	private Vector<Teacher> teachers;
+    private int targetYear;
+    private users.DegreeStudent targetDegree;
 	
 	{
 		teachers = new Vector<Teacher>();
@@ -29,12 +31,12 @@ public class Course implements Serializable{
 	public Course() {
 		
 	}
-	public Course(String courseName, Period semester, String courseCode, int credit, boolean isElective, int studentLimit, Course prerequisites, FacultyType department) {
+	public Course(String courseName, Period semester, String courseCode, int credit, CourseType courseType, int studentLimit, Course prerequisites, FacultyType department) {
 		this.courseName = courseName;
 		this.semester = semester;
 		this.courseCode = courseCode;
 		this.credit = credit;
-		this.isElective = isElective;
+		this.courseType = courseType;
 		this.studentLimit = studentLimit;
 		this.prerequisites = prerequisites;
 		this.department = department;
@@ -93,12 +95,24 @@ public class Course implements Serializable{
 	public void setCredit(int credit) {
 		this.credit = credit;
 	}
-	public boolean isElective() {
-		return isElective;
+	public CourseType getCourseType() {
+		return courseType;
 	}
-	public void setElective(boolean isElective) {
-		this.isElective = isElective;
+	public void setCourseType(CourseType courseType) {
+		this.courseType = courseType;
 	}
+    public int getTargetYear() {
+        return targetYear;
+    }
+    public void setTargetYear(int targetYear) {
+        this.targetYear = targetYear;
+    }
+    public users.DegreeStudent getTargetDegree() {
+        return targetDegree;
+    }
+    public void setTargetDegree(users.DegreeStudent targetDegree) {
+        this.targetDegree = targetDegree;
+    }
 	public Course getPrerequisites() {
 		return prerequisites;
 	}
@@ -126,12 +140,12 @@ public class Course implements Serializable{
 	@Override
 	public String toString() {
 		return "Course [courseName=" + courseName + ", semester=" + semester + ", courseCode=" + courseCode
-				+ ", credit=" + credit + ", isElective=" + isElective + ", studentLimit=" + studentLimit
+				+ ", credit=" + credit + ", courseType=" + courseType + ", studentLimit=" + studentLimit
 				+ ", prerequisites=" + prerequisites + ", department=" + department + "]";
 	}
 	@Override
 	public int hashCode() {
-		return Objects.hash(courseCode, courseName, credit, department, isElective, prerequisites, semester);
+		return Objects.hash(courseCode, courseName, credit, department, courseType, prerequisites, semester);
 	}
 	@Override
 	public boolean equals(Object obj) {
@@ -143,7 +157,7 @@ public class Course implements Serializable{
 			return false;
 		Course other = (Course) obj;
 		return Objects.equals(courseCode, other.courseCode) && Objects.equals(courseName, other.courseName)
-				&& credit == other.credit && department == other.department && isElective == other.isElective
+				&& credit == other.credit && department == other.department && courseType == other.courseType
 				&& Objects.equals(prerequisites, other.prerequisites) && semester == other.semester;
 	}
 	

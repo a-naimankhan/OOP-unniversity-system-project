@@ -40,6 +40,7 @@ public class Admin extends Employee implements Serializable, Comparable<Object>{
 			Employee e = (Employee)user;
 			Database.employees.add(e);
 		}
+        Database.log("Added user: " + user.getUsername(), this.getUsername());
 	}
 	public void removeUser(User user) {
 		Database.users.remove(user);
@@ -63,8 +64,19 @@ public class Admin extends Employee implements Serializable, Comparable<Object>{
 			Employee e = (Employee)user;
 			Database.employees.remove(e);
 		}
+        Database.log("Removed user: " + user.getUsername(), this.getUsername());
 	}
 	public void updateUser(User user) {
 		Database.users.add(user);
+        Database.log("Updated user: " + user.getUsername(), this.getUsername());
 	}
+
+    public String viewLogs() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("System Logs:\n");
+        for (other.LogEntry log : Database.logs) {
+            sb.append(log.toString()).append("\n");
+        }
+        return sb.toString();
+    }
 }
