@@ -1,150 +1,199 @@
-# Tasks - Research-Oriented University System
+# Tasks — Research-Oriented University System
 
-## Existing (already done by phoenix/Саша)
-- [x] User (abstract), Employee (abstract), Student, Teacher, Manager, Admin
-- [x] Course (prerequisites, electives, credits, multiple teachers per course)
-- [x] Mark (1st att, 2nd att, exam, GPA, letter grades)
-- [x] Lesson, LessonType enum (LECTURE, PRACTICE, LAB)
-- [x] News, Message (basic versions)
-- [x] Enums: DegreeStudent, DegreeTeacher, FacultyType, ManagerType, AttestationType
-- [x] Database (Singleton pattern + serialization)
-- [x] Demo classes (console menu for Student, Teacher, Manager, Admin)
-- [x] Comparators: SortByGPA, SortByNames
-- [x] Course registration with 21 credit limit
-- [x] UserFactory (Factory pattern)
-- [x] Day, Period, Time helper classes
+> Дедлайны: **Part B** — 15-я неделя (практика) | **Part C + финальный** — финальный экзамен
 
 ---
 
-## PHOENIX (Саша) - Research System + Patterns + Exceptions
+## Статус по паттернам (нужно ≥ 4)
 
-### Priority 1: Research Core - DONE
-- [x] `Researcher` interface (default methods: `printPapers(Comparator)`, `calculateHIndex()`)
-- [x] `ResearchPaper` class (title, authors, journal, pages, date, doi, citations, volume, number)
-  - [x] `getCitation(Format f)` — Plain Text and BibTeX formats
-  - [x] Implements `Comparable<ResearchPaper>` (by date)
-- [x] `ResearchProject` class (topic, publishedPapers, participants)
-  - [x] Throws `NotResearcherException` if non-Researcher joins
+| Паттерн          | Класс(ы)                                               | Статус |
+|------------------|--------------------------------------------------------|--------|
+| Singleton        | `Database` (getInstance)                               | ✅ Done |
+| Observer         | `Subject`, `Observer`, `Journal`, `User.update()`      | ✅ Done |
+| Factory Method   | `UserCreator` + `StudentCreator/TeacherCreator/...`    | ✅ Done |
+| Decorator        | `IMessage`, `MessageDecorator`, `UrgentMessage`, `EncryptedMessage` | ✅ Done |
+
+**4/4 — требование выполнено.**
+
+---
+
+## PHOENIX (Саша) — Research System + Patterns + Exceptions
+
+### ✅ Всё сделано
+
+- [x] `Researcher` interface (default: `printPapers(Comparator)`, `calculateHIndex()`, `addResearchPaper`)
+- [x] `ResearchPaper` (title, authors, journal, pages, date, doi, citations, volume, number)
+  - [x] `getCitation(Format f)` — Plain Text и BibTeX
+  - [x] `Comparable<ResearchPaper>` по дате
+- [x] `ResearchProject` (topic, publishedPapers, participants)
+  - [x] `addParticipant()` → бросает `NotResearcherException` для не-исследователей
 - [x] `Format` enum (PLAIN_TEXT, BIBTEX)
-- [x] Comparators: `PaperByDate`, `PaperByCitations`, `PaperByPages`
-
-### Priority 2: GraduateStudent - DONE
+- [x] Компараторы: `PaperByDate`, `PaperByCitations`, `PaperByPages`
 - [x] `GraduateStudent extends Student implements Researcher`
-  - [x] researchSupervisor, diplomaProject, researchPapers, researchProjects
-  - [x] Master and PhD students ARE always researchers
-- [x] `DiplomaProject` class (title, publishedPapers list)
-- [x] `InvalidSupervisorException` — if supervisor h-index < 3
+  - [x] researchSupervisor (h-index ≥ 3, иначе `InvalidSupervisorException`)
+  - [x] diplomaProject, researchPapers, researchProjects
+- [x] `DiplomaProject` (title, publishedPapers)
+- [x] Исключения: `InvalidSupervisorException`, `NotResearcherException`, `CreditLimitExceededException`, `MaxFailException`, `LowHIndexException`
+- [x] `Database.getAllResearchers()`, `getTopCitedResearcher()`, `getTopCitedResearcherOfSchool(FacultyType)`
+- [x] Decorator pattern: `IMessage` интерфейс, `MessageDecorator`, `UrgentMessageDecorator`, `EncryptedMessageDecorator`
+- [x] Factory Method: `UserCreator` (abstract) + `StudentCreator`, `TeacherCreator`, `AdminCreator`, `ManagerCreator`; `UserFactory` делегирует в создатели
 
-### Priority 3: Custom Exceptions - DONE
-- [x] `InvalidSupervisorException`
-- [x] `NotResearcherException`
-- [x] `CreditLimitExceededException`
-- [x] `MaxFailException`
+### 🔧 Осталось у Phoenix
 
-### Priority 4: Bug Fixes - DONE
-- [x] Fixed `==` → `.equals()` in User.login()
-- [x] Fixed `==` → `.equals()` in Mark.convertToGPA()
-- [x] Fixed login not resetting isLogged on wrong password
-- [x] Fixed changePassword() — now takes old + new password
-- [x] Filled empty Lesson class
-
-### Priority 5 TODO
-- [x] Add method to print ALL research papers of ALL researchers in university (sorted)
-  - `Database.printAllResearchPapers(Comparator)` + `Database.getAllResearchers()`
-- [x] Add method to get top cited researcher of a school
-  - `Database.getTopCitedResearcherOfSchool(FacultyType)`
-- [x] Add method to get top cited researcher (among all)
-  - `Database.getTopCitedResearcher()`
-- [ ] Think about Decorator pattern for Researcher
-
+- [ ] `LowHIndexException` — создан, но нигде не бросается. Добавить в `Researcher.addResearchPaper()` или в `ResearchProject` если автор с h-index < 1
+- [ ] `Database.serializeJournals()` / `deserializeJournals()` — `journals` вектор есть, но сериализации нет
 
 ---
 
-## DERDIEDASX - News, Journals, TechSupport, Messages
+## DERDIEDASX — News, Journals, TechSupport, Messages
 
-### Priority 1: News System - DONE
-- [x] Upgrade `News` class:
-  - Add: topic (enum: RESEARCH, ACADEMIC, GENERAL), comments (List), author, pinned (boolean)
-- [x] Research news must be pinned/prioritized
-- [x] Auto-generate news when researcher publishes paper
-- [x] Auto-generate news about top cited researcher
-- [x] Comments on news
+### ✅ Всё сделано
 
-### Priority 2: University Journals + Observer Pattern - DONE
-- [x] `Journal` class (name, publishedPapers, subscribers)
-- [x] Observer pattern:
-  - `Subject` interface for Journal
-  - `Observer` interface for User (subscribers)
-  - `subscribe()`, `unsubscribe()`, `notifySubscribers()`
-- [x] All users can subscribe (not only researchers)
-- [x] Notify when new paper published
+- [x] `News` (topic, comments, author, pinned — RESEARCH всегда pinned, Comparable по дате/pin)
+- [x] `NewsTopic` enum (RESEARCH, ACADEMIC, GENERAL)
+- [x] `Comment` (text, author, date)
+- [x] Авто-новость при публикации статьи исследователем
+- [x] Авто-новость о топ-цитируемом исследователе
+- [x] `Journal implements Subject` (subscribe/unsubscribe/notifyObservers, publishPaper)
+- [x] `Observer` interface, `Subject` interface; `User implements Observer`
+- [x] `User.subscribeToJournal()`, `unsubscribeFromJournal()`
+- [x] `TechSupportSpecialist extends Employee` (viewNew/Accepted/Done, accept/reject/markDone/viewRequest)
+- [x] `Request` (description, status, createdBy, date, urgency)
+- [x] `RequestStatus` enum (NEW, VIEWED, ACCEPTED, REJECTED, DONE)
+- [x] `UrgencyLevel` enum (LOW, MEDIUM, HIGH)
+- [x] `Message` (sender, receiver, date, subject) — теперь реализует `IMessage`
+- [x] `Complaint extends Message` (student, urgency)
+- [x] `OfficialMessage extends Message` (purpose)
+- [x] `Teacher.sendComplaint(Student, urgency, dean)`
+- [x] `Language` enum (KZ, EN, RU), `LanguageManager`, поле language в User
 
-### Priority 3: TechSupportSpecialist - DONE
-- [x] `TechSupportSpecialist extends Employee`
-- [x] `Request` class (description, status, createdBy)
-- [x] `RequestStatus` enum: **VIEWED, ACCEPTED, REJECTED, DONE**
-  (after specialist sees it → VIEWED, then ACCEPTED/REJECTED, then DONE)
-- [x] View new/accepted/done requests
+### 🔧 Осталось у derdiedasx
 
-### Priority 4: Message System - DONE
-- [x] Upgrade `Message` (add: sender, receiver, date, subject)
-- [x] `Complaint extends Message` + `UrgencyLevel` enum (LOW, MEDIUM, HIGH)
-- [x] Teacher.sendComplaint(Student, UrgencyLevel) to dean
-- [x] Working official messages (служебные записки) — booking rooms for exams, etc.
-
-### Priority 5: Language Support - DONE
-- [x] `Language` enum (KZ, EN, RU)
-- [x] Language field in User
-- [x] Menu text in 3 languages (LanguageManager)
+- [ ] `Request` не имеет поля `signedBy` — по ТЗ запросы должны быть подписаны деканом/ректором (нужно добавить `User signedBy` в Request)
+- [ ] `Database.requests` существует, но `TechSupportSpecialist` не добавляет новые запросы сам — нужен метод `createRequest()` либо у User, либо у Student/Employee
 
 ---
 
-## ITACHI8539 - Student/Teacher/Manager/Admin + Demo
+## ITACHI8539 — Student / Teacher / Manager / Admin + Demo
 
-### Priority 1: Student
-- [ ] `StudentOrganization` class (name, members, head)
-- [ ] `Transcript` class (courses list, marks, GPA, total credits)
-- [ ] Enforce max 3 fails (throw `MaxFailException`)
+### ✅ Сделано
+
+- [x] `Transcript` (student, getTranscript() — полный вывод с оценками, GPA, кредитами)
+
+### ❌ Приоритет 1: Student — НЕ СДЕЛАНО
+
+- [ ] `StudentOrganization` класс (name, String role, List<Student> members, Student head)
+  - Student должен иметь `List<StudentOrganization> organizations`
+  - Методы: `joinOrganization()`, `leaveOrganization()`, `becomeHead()`
+- [ ] Ограничение: студент не может провалить курс более 3 раз
+  - В `Student`: добавить `Map<Course, Integer> failCount`
+  - В `registerCourse()`: если студент уже падал курс 3 раза → бросить `MaxFailException`
 - [ ] `CourseType` enum: MAJOR, MINOR, FREE_ELECTIVE
+  - Добавить поле `CourseType courseType` в класс `Course`
+  - Убрать/заменить boolean `isElective`
 
-### Priority 2: Teacher
-- [ ] Update DegreeTeacher enum: TUTOR, LECTOR, SENIOR_LECTOR, PROFESSOR
-- [ ] Professors → always implement Researcher
-- [ ] Non-professors → optionally can be Researcher
-- [ ] Report generation (mark statistics per course)
+### ❌ Приоритет 2: Teacher — НЕ СДЕЛАНО
 
-### Priority 3: Manager
-- [ ] Statistical reports on academic performance
-- [ ] View employee requests (signed by dean/rector)
-- [ ] Improve approveRegistration
-- [ ] Specify course for major/year
+- [ ] Teacher как Researcher: добавить `ResearchTeacher extends Teacher implements Researcher`
+  OR сделать Teacher implement Researcher напрямую (с полями researchPapers, researchProjects)
+  - По ТЗ: **Professors (DegreeTeacher.PROFESSOR) — ВСЕГДА Researcher**; остальные опционально
+  - Если Teacher.degree == PROFESSOR → обязателен как Researcher
+- [ ] Обновить `DegreeTeacher` enum — добавить SENIOR_LECTOR если нет (уже есть SENIOR — ОК)
+- [ ] `Teacher.generateReport(Course)` — простая статистика по оценкам курса (средняя, мин, макс)
 
-### Priority 4: Admin
-- [ ] Log files (user actions logging)
-- [ ] Admin can view logs
-- [ ] Improve add/remove/update user
+### ❌ Приоритет 3: Manager — НЕ СДЕЛАНО
 
-### Priority 5: Console Demo (Part C)
-- [ ] Update all Demo classes
-- [ ] `ResearcherDemo`, `TechSupportDemo`, `GraduateStudentDemo`
-- [ ] Main demo with authentication flow
-- [ ] Everything runs in console
+- [ ] Статистический отчёт об успеваемости (`AcademicReport` класс или метод `generateReport()`)
+  - Средний GPA по факультету, топ студенты, проваленные курсы и т.д.
+- [ ] `Course` нужно поле для целевого года обучения и специальности: `int targetYear`, `DegreeStudent targetDegree`
+- [ ] Просмотр запросов сотрудников (подписанных деканом/ректором)
+
+### ❌ Приоритет 4: Admin — НЕ СДЕЛАНО
+
+- [ ] Логирование действий пользователей (`LogEntry` класс или просто список строк в Database)
+  - `Database.logs = new Vector<String>()`
+  - Метод `Database.log(String action)`
+  - `Admin.viewLogs()` — возвращает список логов
+- [ ] `Admin.addUser()` / `removeUser()` должны логировать действие
+
+### ❌ Приоритет 5: Console Demo (Part C) — НЕ СДЕЛАНО
+
+- [ ] Обновить `StudentDemo` — добавить организации, Transcript
+- [ ] Обновить `TeacherDemo` — добавить research, отчёты
+- [ ] Обновить `ManagerDemo` — статистика, отчёты
+- [ ] Обновить `AdminDemo` — логи
+- [ ] Добавить `ResearcherDemo` (публикация, h-index, comparators)
+- [ ] Добавить `TechSupportDemo`
+- [ ] Добавить `GraduateStudentDemo`
+- [ ] `Main.java` — полный flow с аутентификацией (login → меню по роли)
 
 ---
 
-## Summary
+## 🐛 Баги в существующем коде (нужно исправить)
 
-| Member          | Responsibility              | Key Classes                                          |
-|-----------------|-----------------------------|------------------------------------------------------|
-| phoenix (Саша)  | Research + patterns + bugs  | Researcher, ResearchPaper, ResearchProject,          |
-|                 |                             | GraduateStudent, DiplomaProject, 4 Exceptions        |
-| derdiedasx      | News, journals, tech support| Journal, Observer, TechSupportSpecialist, Request,   |
-|                 |                             | Complaint, upgrade News & Message                    |
-| itachi8539      | Student/Teacher/Mgr + demo  | StudentOrganization, Transcript, CourseType,          |
-|                 |                             | LogAction, all Demo classes                          |
+| Файл | Баг | Приоритет |
+|------|-----|-----------|
+| `mark/Mark.java` | `convertToLetterMark()` и `convertToGPA()` используют поле `finalAttestation` (=0), а не метод `getFinalAttestation()` — все оценки всегда "F" | **КРИТИЧНО** |
+| `users/Student.java` | `dropCourse()` проверяет `getFinalAttestation() == 0`, что ВСЕГДА true для новых отметок — студент может дропнуть любой курс в любой момент | HIGH |
+| `users/Teacher.java` | `getRating()` в catch-блоке `ArithmeticException` снова делит `rating / ratedCnt` → бросит снова. Нужен `return 0;` | HIGH |
+| `users/Student.java` | `registerCourse()` не бросает `CreditLimitExceededException` — просто возвращает false | MED |
+| `users/Student.java` | Нет проверки на 3 фейла (`MaxFailException`) в `registerCourse()` | MED |
+| `users/Database.java` | `journals` в Database есть, но нет `serializeJournals()` / `deserializeJournals()` | MED |
 
-## Deadlines
-- Part A (UML diagrams): 14th week
-- Part B (classes draft): 15th week (practice)
-- Part C (demo + final): final exam
-- **Приоритет:** course registration → marks → research
+### Исправление для Mark (КРИТИЧНО):
+
+В `Mark.convertToLetterMark()` изменить:
+```java
+// было:
+if (finalAttestation >= 95 ...
+// стало:
+double total = getFinalAttestation();
+if (total >= 95 ...
+```
+
+---
+
+## Сводная таблица команды
+
+| Участник        | Зона ответственности        | Ключевые классы                                          | Статус    |
+|-----------------|-----------------------------|----------------------------------------------------------|-----------|
+| phoenix (Саша)  | Research + patterns + bugs  | Researcher, ResearchPaper, ResearchProject, GraduateStudent, Decorator, Factory | ✅ В основном готово |
+| derdiedasx      | News, journals, tech support| Journal, Observer, TechSupportSpecialist, Complaint, Message | ✅ В основном готово |
+| itachi8539      | Student/Teacher/Mgr + demo  | StudentOrganization, CourseType, LogAction, все Demo-классы | ❌ Бо́льшая часть не сделана |
+
+---
+
+## Чек-лист Part B (показываем на 15-й неделе)
+
+Минимум, который должен быть:
+
+- [x] Все классы из ТЗ существуют (User, Employee, Teacher, Manager, Student, GraduateStudent, Admin, Course, Mark, Lesson, TechSupportSpecialist, Researcher, ResearchPaper, ResearchProject, News, Message)
+- [x] Все enum из ТЗ (DegreeStudent, DegreeTeacher, FacultyType, LessonType, Period, AttestationType, ManagerType, Language, UrgencyLevel, RequestStatus, Format)
+- [x] Свои исключения (≥ 4 шт.)
+- [x] ≥ 4 паттерна (Observer, Singleton, Factory Method, Decorator)
+- [x] Serialization (Database)
+- [x] Comparable + Comparators
+- [ ] `CourseType` enum (MAJOR, MINOR, FREE_ELECTIVE)
+- [ ] `StudentOrganization`
+- [ ] Teacher implements Researcher (для профессоров)
+- [ ] Исправить баг в `Mark.convertToLetterMark()`
+- [x] `Transcript` класс
+
+---
+
+## Бонусы (extra points)
+
+- [ ] Расписание (Schedule): классы `Room` (type, capacity, number), `Schedule` (lessons by day/time)
+- [ ] Посещаемость (Attendance)
+- [ ] Расширенный поиск (RegEx)
+- [ ] Стартапы, рекомендательные письма
+
+---
+
+## Дедлайны
+
+| Часть    | Срок                         |
+|----------|------------------------------|
+| Part A   | 14-я неделя (диаграммы)      |
+| Part B   | 15-я неделя (практика) — черновик; финальный экзамен — финальная версия |
+| Part C   | Финальный экзамен            |
