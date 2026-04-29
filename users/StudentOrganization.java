@@ -1,9 +1,11 @@
 package users;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.ArrayList;
 
 public class StudentOrganization implements Serializable {
+	
 	private static final long serialVersionUID = 1L;
 	
 	private String name;
@@ -11,7 +13,17 @@ public class StudentOrganization implements Serializable {
 	private List<Student> members;
 	private Student head;
 	
+	{
+		members = new ArrayList<Student>();
+	}
+	
+	public StudentOrganization() {
+		
+	}
+	
+	public StudentOrganization(String name, String role, Student head) {
 		this.name = name;
+		this.role = role;
 		this.head = head;
 	}
 	
@@ -35,6 +47,10 @@ public class StudentOrganization implements Serializable {
 		return members;
 	}
 	
+	public void setMembers(List<Student> members) {
+		this.members = members;
+	}
+	
 	public Student getHead() {
 		return head;
 	}
@@ -45,5 +61,6 @@ public class StudentOrganization implements Serializable {
 	
 	@Override
 	public String toString() {
+		return "StudentOrganization [name=" + name + ", role=" + role + ", members=" + members.size() + ", head=" + (head != null ? head.getFullName() : "none") + "]";
 	}
 }

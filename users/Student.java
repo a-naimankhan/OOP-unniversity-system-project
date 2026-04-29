@@ -142,6 +142,18 @@ public class Student extends User implements Serializable, Comparable<Object> {
 		this.marks = marks;
 	}
 	
+	public void leaveOrganization(StudentOrganization org) {
+		if (organizations.contains(org)) {
+			organizations.remove(org);
+			org.getMembers().remove(this);
+		}
+	}
+	
+	public void becomeHead(StudentOrganization org) {
+		if (organizations.contains(org)) {
+			org.setHead(this);
+		}
+	}
 	
 	@Override
 	public String toString() {
