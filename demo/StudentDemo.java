@@ -18,28 +18,39 @@ public class StudentDemo {
 	private static void register() throws IOException {
 		System.out.println("Enter course name: ");
 		String courseName = br.readLine();
-		
-		for(Course c : Database.courses) {
+
+		for (Course c : Database.courses) {
 			if (c.getCourseName().equals(courseName)) {
-				if(student.registerCourse(c));
-					System.out.println("Registered successfully");
+				try {
+					if (student.registerCourse(c)) {
+						System.out.println("Registered successfully");
+					} else {
+						System.out.println("Could not register (course not in DB)");
+					}
+				} catch (Exception ex) {
+					System.out.println("Registration failed: " + ex.getMessage());
+				}
+				return;
 			}
 		}
-		System.out.println("Error");
+		System.out.println("Course not found");
 	}
-	
+
 	private static void drop() throws IOException {
 		System.out.println("Enter course name: ");
 		String courseName = br.readLine();
-		
-		for(Course c : Database.courses) {
+
+		for (Course c : Database.courses) {
 			if (c.getCourseName().equals(courseName)) {
-				if (student.dropCourse(c));
+				if (student.dropCourse(c)) {
 					System.out.println("Dropped successfully");
+				} else {
+					System.out.println("Cannot drop — course already has marks");
+				}
+				return;
 			}
 		}
-		System.out.println("Error");
-		
+		System.out.println("Course not found");
 	}
 	
 	private static void exit() {

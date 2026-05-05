@@ -80,17 +80,22 @@ public class ManagerDemo {
 		else if (depName.equals("KMA")) type = FacultyType.KMA;
 		else if (depName.equals("SMS")) type = FacultyType.SMS;
 		
-		if(manager.addCourse(new Course(courseName, period, courseCode, credit, isElective, studentLimit, prereq, type)));
+		if (manager.addCourse(new Course(courseName, period, courseCode, credit, isElective, studentLimit, prereq, type))) {
 			System.out.println("Course is successfully added!");
+		} else {
+			System.out.println("Course already exists.");
+		}
 	}
-	
+
 	private static void removeCourse() throws IOException {
 		System.out.println("Enter course name: ");
 		String courseName = br.readLine();
 		for (Course c : Database.courses) {
 			if (c.getCourseName().equals(courseName)) {
-				if (manager.removeCourse(c));
+				if (manager.removeCourse(c)) {
 					System.out.println("Course is successfully removed!");
+				}
+				return;
 			}
 		}
 		System.out.println("Course is not in the Database!");
@@ -109,23 +114,26 @@ public class ManagerDemo {
 		System.out.println("Enter news date: ");
 		postDate = br.readLine();
 		
-		if(manager.addNews(new News(title, text, postDate, NewsTopic.GENERAL, manager)));
+		if (manager.addNews(new News(title, text, postDate, NewsTopic.GENERAL, manager))) {
 			System.out.println("News is successfully added!");
+		}
 	}
-	
+
 	private static void removeNews() throws IOException {
 		System.out.println("Enter news title: ");
 		String title = br.readLine();
-		
+
 		for (News n : Database.news) {
 			if (n.getTitle().equals(title)) {
-				if (manager.removeNews(n));
+				if (manager.removeNews(n)) {
 					System.out.println("News is successfully removed!");
+				}
+				return;
 			}
 		}
 		System.out.println("News is not in the Database!");
 	}
-	
+
 	private static void updateNews() throws IOException {
 		System.out.println("Enter old news title: ");
 		String title = br.readLine();
@@ -137,8 +145,10 @@ public class ManagerDemo {
 				String newText = br.readLine();
 				System.out.println("Enter new news post date: ");
 				String newDate = br.readLine();
-				if (manager.updateNews(n, new News(newTitle, newText, newDate, n.getTopic(), manager)));
+				if (manager.updateNews(n, new News(newTitle, newText, newDate, n.getTopic(), manager))) {
 					System.out.println("News is updated!");
+				}
+				return;
 			}
 		}
 		System.out.println("Oops, News is not in the Database!");
@@ -277,9 +287,10 @@ public class ManagerDemo {
 							if (c.getCourseName().equals(courseName)) {
 								for (Teacher t : Database.teachers) {
 									if (t.getFullName().equals(teacherName)) {
-										if (manager.assignCoursesToTeachers(c, t));
+										if (manager.assignCoursesToTeachers(c, t)) {
 											System.out.println("\n Assigned successfully!");
-									}	
+										}
+									}
 								}
 							}
 						}
