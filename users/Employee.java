@@ -5,7 +5,7 @@ import java.util.Vector;
 
 import other.Message;
 
-public abstract class Employee extends User implements Comparable<Object>{
+public abstract class Employee extends User {
 	private int salary;
 	private Vector<Message> messages;
 	
@@ -90,13 +90,13 @@ public abstract class Employee extends User implements Comparable<Object>{
 	/**
 	 * we compare salaries of 2 objects
 	 */
-	public int compareTo(Object o) {
-		if (super.compareTo(o) == 0) {
-			Employee e = (Employee)o;
-			if (getSalary() < e.getSalary()) return -1;
-			else return 1;
-		}
-		return 0;
+	@Override
+	public int compareTo(User o) {
+		int byName = super.compareTo(o);
+		if (byName != 0) return byName;
+		if (!(o instanceof Employee)) return 0;
+		Employee e = (Employee) o;
+		return Integer.compare(this.getSalary(), e.getSalary());
 	}
 	
 }
