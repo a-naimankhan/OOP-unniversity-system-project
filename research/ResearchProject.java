@@ -32,8 +32,6 @@ public class ResearchProject implements Serializable {
 				"Person is not a Researcher and cannot join the project: " + topic);
 		}
 		Researcher r = (Researcher) person;
-		// A researcher with no citations at all (h-index == 0) and at least one paper
-		// cannot join a project — they have not established a research track record.
 		if (!r.getResearchPapers().isEmpty() && r.calculateHIndex() == 0) {
 			throw new LowHIndexException(
 				"Researcher has papers but h-index is 0 (no citations) — cannot join project: " + topic);
@@ -45,7 +43,7 @@ public class ResearchProject implements Serializable {
 		publishedPapers.add(paper);
 	}
 
-	// Getters and setters
+	// geetters and setters
 	public String getTopic() { return topic; }
 	public void setTopic(String topic) { this.topic = topic; }
 
