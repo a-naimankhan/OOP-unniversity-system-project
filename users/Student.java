@@ -12,6 +12,7 @@ import course.Course;
 import exceptions.CreditLimitExceededException;
 import exceptions.MaxFailException;
 import mark.Mark;
+import exceptions.MaxFailException;
 
 public class Student extends User implements Serializable {
 

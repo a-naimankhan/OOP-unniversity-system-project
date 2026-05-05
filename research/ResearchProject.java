@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import exceptions.LowHIndexException;
 import exceptions.NotResearcherException;
+import exceptions.LowHIndexException;
 
 public class ResearchProject implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -26,6 +27,7 @@ public class ResearchProject implements Serializable {
 		this.participants = new ArrayList<>();
 	}
 
+	public void addParticipant(Object person) throws NotResearcherException, LowHIndexException {
 	public void addParticipant(Object person) throws NotResearcherException, LowHIndexException {
 		if (!(person instanceof Researcher)) {
 			throw new NotResearcherException(

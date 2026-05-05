@@ -9,6 +9,7 @@ public class Request implements Serializable {
     private String description;
     private RequestStatus status;
     private User createdBy;
+    private User signedBy;
     private String date;
     private UrgencyLevel urgency;
     private User signedBy;

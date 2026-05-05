@@ -18,6 +18,7 @@ public class Course implements Serializable{
 	private String courseCode;
 	private int credit;
 	private CourseType courseType;
+	private CourseType courseType;
 	private int studentLimit;
 	private Course prerequisites;
 	private FacultyType department;
@@ -40,6 +41,7 @@ public class Course implements Serializable{
 		this.semester = semester;
 		this.courseCode = courseCode;
 		this.credit = credit;
+		this.courseType = courseType;
 		this.courseType = courseType;
 		this.studentLimit = studentLimit;
 		this.prerequisites = prerequisites;

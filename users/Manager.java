@@ -141,6 +141,29 @@ public class Manager extends Employee implements Serializable {
 		}
 		return info;
 	}
+
+    public String generateAcademicReport() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Academic Report:\n");
+        
+        for (FacultyType faculty : FacultyType.values()) {
+            double facultyGpaSum = 0;
+            int studentCount = 0;
+            for (Student s : Database.students) {
+                if (s.getFaculty() == faculty) {
+                    facultyGpaSum += s.getGpa();
+                    studentCount++;
+                }
+            }
+            if (studentCount > 0) {
+                sb.append("Faculty: ").append(faculty).append("\n");
+                sb.append("  Avg GPA: ").append(facultyGpaSum / studentCount).append("\n");
+                sb.append("  Students: ").append(studentCount).append("\n");
+            }
+        }
+        return sb.toString();
+    }
+
 	public ManagerType getType() {
 		return type;
 	}

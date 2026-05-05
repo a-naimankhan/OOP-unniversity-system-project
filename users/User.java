@@ -55,6 +55,12 @@ public abstract class User implements Serializable, Comparable<User>, Observer {
     public void unsubscribeFromJournal(Journal journal) {
         journal.unsubscribe(this);
     }
+
+    public void createRequest(String description, other.UrgencyLevel urgency) {
+        other.Request r = new other.Request(description, this, new java.util.Date().toString(), urgency);
+        Database.requests.add(r);
+        Database.log("Created tech support request: " + description, this.username);
+    }
 	
     @Override
     public void update(String message) {

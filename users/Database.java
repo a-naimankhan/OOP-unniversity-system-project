@@ -22,18 +22,22 @@ import course.Course;
 import mark.Mark;
 import other.News;
 import other.NewsTopic;
+import other.LogEntry;
 import research.Researcher;
 import research.ResearchPaper;
 import research.Journal;
+import research.Observer;
+import research.Subject;
 import other.Request;
 
-public final class Database implements Serializable{
+public final class Database implements Serializable, Subject {
 
     private static final long serialVersionUID = 1L;
     private final static String BASEPATH = "data" + File.separator;
     private static Database instance = new Database(BASEPATH);
     private String value;
     private static Researcher currentTopResearcher = null;
+    private List<Observer> logObservers = new ArrayList<>();
 
     static {
         try {
@@ -77,6 +81,7 @@ public final class Database implements Serializable{
 	public static Vector<String> comments = new Vector<String>();
 	public static Vector<Journal> journals = new Vector<Journal>();
 	public static Vector<Request> requests = new Vector<Request>();
+    public static Vector<LogEntry> logs = new Vector<LogEntry>();
 
 
 	/**
@@ -115,6 +120,28 @@ public final class Database implements Serializable{
         }
 		return top;
 	}
+
+    public static Researcher getTopCitedResearcherOfSchool(FacultyType faculty) {
+        Researcher top = null;
+        int maxCitations = 0;
+        for (Researcher r : getAllResearchers()) {
+            FacultyType rFaculty = null;
+            if (r instanceof Student) rFaculty = ((Student)r).getFaculty();
+            else if (r instanceof Teacher) rFaculty = ((Teacher)r).getDepartment();
+            
+            if (rFaculty == faculty) {
+                int total = 0;
+                for (ResearchPaper p : r.getResearchPapers()) {
+                    total += p.getCitations();
+                }
+                if (total > maxCitations) {
+                    maxCitations = total;
+                    top = r;
+                }
+            }
+        }
+        return top;
+    }
 
     private static void generateTopCitedNews(Researcher r) {
         String name = (r instanceof User) ? ((User)r).getFullName() : "A researcher";

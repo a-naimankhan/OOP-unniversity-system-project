@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import other.News;
 import other.NewsTopic;
+import exceptions.LowHIndexException;
 import users.Database;
 import users.User;
 
@@ -15,6 +16,10 @@ public interface Researcher {
     List<ResearchProject> getResearchProjects();
 
     default void addResearchPaper(ResearchPaper paper) {
+        if (paper.getCitations() < 0) { // Just an example of validation
+             throw new IllegalArgumentException("Citations cannot be negative.");
+        }
+        
         getResearchPapers().add(paper);
         
         // Auto-generate news

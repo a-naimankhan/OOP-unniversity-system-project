@@ -126,8 +126,7 @@ public class Teacher extends Employee implements Serializable {
 	public void setDepartment(FacultyType department) { this.department = department; }
 
 	public double getRating() {
-		if (ratedCnt == 0) return 0;
-		return rating / ratedCnt;
+		return (ratedCnt == 0) ? 0 : rating / ratedCnt;
 	}
 
 	public void setRating(double newRating) {

@@ -80,41 +80,41 @@
 
 - [x] `Transcript` (student, getTranscript() — полный вывод с оценками, GPA, кредитами)
 
-### ❌ Приоритет 1: Student — НЕ СДЕЛАНО
+### ✅ Приоритет 1: Student —  СДЕЛАНО
 
-- [ ] `StudentOrganization` класс (name, String role, List<Student> members, Student head)
+- [x] `StudentOrganization` класс (name, String role, List<Student> members, Student head)
   - Student должен иметь `List<StudentOrganization> organizations`
   - Методы: `joinOrganization()`, `leaveOrganization()`, `becomeHead()`
-- [ ] Ограничение: студент не может провалить курс более 3 раз
+- [x] Ограничение: студент не может провалить курс более 3 раз
   - В `Student`: добавить `Map<Course, Integer> failCount`
   - В `registerCourse()`: если студент уже падал курс 3 раза → бросить `MaxFailException`
-- [ ] `CourseType` enum: MAJOR, MINOR, FREE_ELECTIVE
+- [x] `CourseType` enum: MAJOR, MINOR, FREE_ELECTIVE
   - Добавить поле `CourseType courseType` в класс `Course`
   - Убрать/заменить boolean `isElective`
 
-### ❌ Приоритет 2: Teacher — НЕ СДЕЛАНО
+### ✅ Приоритет 2: Teacher — СДЕЛАНО
 
-- [ ] Teacher как Researcher: добавить `ResearchTeacher extends Teacher implements Researcher`
+- [x] Teacher как Researcher: добавить `ResearchTeacher extends Teacher implements Researcher`
   OR сделать Teacher implement Researcher напрямую (с полями researchPapers, researchProjects)
   - По ТЗ: **Professors (DegreeTeacher.PROFESSOR) — ВСЕГДА Researcher**; остальные опционально
   - Если Teacher.degree == PROFESSOR → обязателен как Researcher
-- [ ] Обновить `DegreeTeacher` enum — добавить SENIOR_LECTOR если нет (уже есть SENIOR — ОК)
-- [ ] `Teacher.generateReport(Course)` — простая статистика по оценкам курса (средняя, мин, макс)
+- [x] Обновить `DegreeTeacher` enum — добавить SENIOR_LECTOR если нет (уже есть SENIOR — ОК)
+- [x] `Teacher.generateReport(Course)` — простая статистика по оценкам курса (средняя, мин, макс)
 
-### ❌ Приоритет 3: Manager — НЕ СДЕЛАНО
+### ✅ Приоритет 3: Manager —  СДЕЛАНО
 
-- [ ] Статистический отчёт об успеваемости (`AcademicReport` класс или метод `generateReport()`)
+- [x] Статистический отчёт об успеваемости (`AcademicReport` класс или метод `generateReport()`)
   - Средний GPA по факультету, топ студенты, проваленные курсы и т.д.
-- [ ] `Course` нужно поле для целевого года обучения и специальности: `int targetYear`, `DegreeStudent targetDegree`
-- [ ] Просмотр запросов сотрудников (подписанных деканом/ректором)
+- [x] `Course` нужно поле для целевого года обучения и специальности: `int targetYear`, `DegreeStudent targetDegree`
+- [x] Просмотр запросов сотрудников (подписанных деканом/ректором)
 
-### ❌ Приоритет 4: Admin — НЕ СДЕЛАНО
+### ✅ Приоритет 4: Admin —  СДЕЛАНО
 
-- [ ] Логирование действий пользователей (`LogEntry` класс или просто список строк в Database)
+- [x] Логирование действий пользователей (`LogEntry` класс или просто список строк в Database)
   - `Database.logs = new Vector<String>()`
   - Метод `Database.log(String action)`
   - `Admin.viewLogs()` — возвращает список логов
-- [ ] `Admin.addUser()` / `removeUser()` должны логировать действие
+- [x] `Admin.addUser()` / `removeUser()` должны логировать действие
 
 ### ❌ Приоритет 5: Console Demo (Part C) — НЕ СДЕЛАНО
 
