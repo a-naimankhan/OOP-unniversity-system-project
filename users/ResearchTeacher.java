@@ -9,11 +9,7 @@ import research.Researcher;
 import research.ResearchPaper;
 import research.ResearchProject;
 
-/**
- * A Teacher who also conducts research.
- * Per the TZ, all Professors (DegreeTeacher.PROFESSOR) must be Researchers.
- * Use this class (or its subclass) when creating professor-level teachers.
- */
+
 public class ResearchTeacher extends Teacher implements Serializable, Researcher {
 
     private static final long serialVersionUID = 1L;
