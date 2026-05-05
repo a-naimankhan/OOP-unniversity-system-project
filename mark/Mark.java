@@ -2,21 +2,21 @@ package mark;
 
 import java.io.Serializable;
 
-public class Mark implements Serializable{
-	
+public class Mark implements Serializable {
+
 	private static final long serialVersionUID = 1L;
-	
+
 	private double firstAttestation;
 	private double secondAttestation;
 	private double examMark;
-	private double finalAttestation;
 	private AttestationType period;
-	
+
 	public Mark() {
 		this.firstAttestation = 0;
 		this.secondAttestation = 0;
-		this.finalAttestation = 0;
+		this.examMark = 0;
 	}
+
 	public Mark(double currentMark, AttestationType period) {
 		this.period = period;
 		if (this.period == AttestationType.FIRST)
@@ -26,93 +26,71 @@ public class Mark implements Serializable{
 		else
 			this.examMark = currentMark;
 	}
-	
+
 	public void setMark(double currentMark) {
 		if (this.period == AttestationType.FIRST) {
-			this.setFirstAttestation(this.getFirstAttestation() + currentMark);
-			if (this.getFirstAttestation() > 30) this.setFirstAttestation(30);
+			this.firstAttestation += currentMark;
+			if (this.firstAttestation > 30) this.firstAttestation = 30;
+		} else if (this.period == AttestationType.SECOND) {
+			this.secondAttestation += currentMark;
+			if (this.secondAttestation > 30) this.secondAttestation = 30;
+		} else {
+			this.examMark += currentMark;
+			if (this.examMark > 40) this.examMark = 40;
 		}
-		else if (this.period == AttestationType.SECOND) {
-			this.setSecondAttestation(getSecondAttestation() + currentMark);
-			if (this.getSecondAttestation() > 30) this.setSecondAttestation(30);
-		}
-		else this.setExamMark(currentMark);
 	}
 
-	
-	public double getFirstAttestation() {
-		return firstAttestation;
-	}
-	public double getSecondAttestation() {
-		return secondAttestation;
-	}
-	public double getExamMark() {
-		return examMark;
-	}
-	public void setFirstAttestation(double firstAttestation) {
-		this.firstAttestation = firstAttestation;
-	}
-	public void setSecondAttestation(double secondAttestation) {
-		this.secondAttestation = secondAttestation;
-	}	
+	public double getFirstAttestation() { return firstAttestation; }
+	public void setFirstAttestation(double v) { this.firstAttestation = v; }
+
+	public double getSecondAttestation() { return secondAttestation; }
+	public void setSecondAttestation(double v) { this.secondAttestation = v; }
+
+	public double getExamMark() { return examMark; }
+	public void setExamMark(double v) { this.examMark = v; }
+
 	public double getFinalAttestation() {
-		return this.getFirstAttestation() + this.getSecondAttestation() + this.getExamMark();
+		return firstAttestation + secondAttestation + examMark;
 	}
-	public void setFinalAttestation(double finalAttestation) {
-		this.finalAttestation = finalAttestation;
-	}
-	public void setExamMark(double examMark) {
-		this.examMark = examMark;
-	}
-	public AttestationType getPeriod() {
-		return period;
-	}
-	public void setPeriod(AttestationType period) {
-		this.period = period;
-	}
-	
-	public String convertToLetterMark() {
-		// use calculated sum, not the raw field (field defaults to 0)
-		double total = getFinalAttestation();
-		String letterMark;
-		if (total >= 95 && total <= 100) letterMark = "A";
-		else if (total >= 90 && total <= 94) letterMark = "A-";
-		else if (total >= 85 && total <= 89) letterMark = "B+";
-		else if (total >= 80 && total <= 84) letterMark = "B";
-		else if (total >= 75 && total <= 79) letterMark = "B-";
-		else if (total >= 70 && total <= 74) letterMark = "C+";
-		else if (total >= 65 && total <= 69) letterMark = "C";
-		else if (total >= 60 && total <= 64) letterMark = "C-";
-		else if (total >= 55 && total <= 59) letterMark = "D+";
-		else if (total >= 50 && total <= 54) letterMark = "D";
-		else letterMark = "F";
-		
-		return letterMark;
-	}
-	
-	public double convertToGPA() {
-		String letterMark = this.convertToLetterMark();
-		double gpa;
-		if (letterMark.equals("A")) gpa = 4.00;
-		else if (letterMark.equals("A-")) gpa = 3.67;
-		else if (letterMark.equals("B+")) gpa = 3.33;
-		else if (letterMark.equals("B")) gpa = 3.00;
-		else if (letterMark.equals("B-")) gpa = 2.67;
-		else if (letterMark.equals("C+")) gpa = 2.33;
-		else if (letterMark.equals("C")) gpa = 2.00;
-		else if (letterMark.equals("C-")) gpa = 1.67;
-		else if (letterMark.equals("D+")) gpa = 1.33;
-		else if (letterMark.equals("D")) gpa = 1.00;
-		else gpa = 0;
 
-		return gpa;
+	public AttestationType getPeriod() { return period; }
+	public void setPeriod(AttestationType period) { this.period = period; }
+
+	public String convertToLetterMark() {
+		double total = getFinalAttestation();
+		if (total >= 95) return "A";
+		if (total >= 90) return "A-";
+		if (total >= 85) return "B+";
+		if (total >= 80) return "B";
+		if (total >= 75) return "B-";
+		if (total >= 70) return "C+";
+		if (total >= 65) return "C";
+		if (total >= 60) return "C-";
+		if (total >= 55) return "D+";
+		if (total >= 50) return "D";
+		return "F";
 	}
+
+	public double convertToGPA() {
+		switch (convertToLetterMark()) {
+			case "A":  return 4.00;
+			case "A-": return 3.67;
+			case "B+": return 3.33;
+			case "B":  return 3.00;
+			case "B-": return 2.67;
+			case "C+": return 2.33;
+			case "C":  return 2.00;
+			case "C-": return 1.67;
+			case "D+": return 1.33;
+			case "D":  return 1.00;
+			default:   return 0.00;
+		}
+	}
+
 	@Override
 	public String toString() {
-		return "Mark [firstAttestation=" + getFirstAttestation() + ", secondAttestation=" + getSecondAttestation() + ", examMark="
-				+ examMark + "]";
+		return "Mark [att1=" + firstAttestation + ", att2=" + secondAttestation
+				+ ", exam=" + examMark + ", total=" + getFinalAttestation()
+				+ " (" + convertToLetterMark() + ")]";
 	}
-	
-	
-		
 }
