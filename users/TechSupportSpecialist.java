@@ -9,64 +9,77 @@ import other.RequestStatus;
 public class TechSupportSpecialist extends Employee implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    public TechSupportSpecialist() {
-        super();
-    }
+    public TechSupportSpecialist() { super(); }
 
     public TechSupportSpecialist(String fullName, String username, String password, int salary) {
         super(fullName, username, password, salary);
     }
 
     public List<Request> viewNewRequests() {
-        List<Request> newReqs = new ArrayList<>();
+        List<Request> result = new ArrayList<>();
         for (Request r : Database.requests) {
-            if (r.getStatus() == RequestStatus.NEW) {
-                newReqs.add(r);
-            }
+            if (r.getStatus() == RequestStatus.NEW) result.add(r);
         }
-        return newReqs;
+        return result;
     }
 
     public List<Request> viewAcceptedRequests() {
-        List<Request> acceptedReqs = new ArrayList<>();
+        List<Request> result = new ArrayList<>();
         for (Request r : Database.requests) {
-            if (r.getStatus() == RequestStatus.ACCEPTED) {
-                acceptedReqs.add(r);
-            }
+            if (r.getStatus() == RequestStatus.ACCEPTED) result.add(r);
         }
-        return acceptedReqs;
+        return result;
     }
 
     public List<Request> viewDoneRequests() {
-        List<Request> doneReqs = new ArrayList<>();
+        List<Request> result = new ArrayList<>();
         for (Request r : Database.requests) {
-            if (r.getStatus() == RequestStatus.DONE) {
-                doneReqs.add(r);
-            }
+            if (r.getStatus() == RequestStatus.DONE) result.add(r);
         }
-        return doneReqs;
+        return result;
     }
 
-    public void acceptRequest(Request r) {
-        r.setStatus(RequestStatus.ACCEPTED);
-        System.out.println("Request accepted: " + r.getDescription());
-    }
-
-    public void rejectRequest(Request r) {
-        r.setStatus(RequestStatus.REJECTED);
-        System.out.println("Request rejected: " + r.getDescription());
-    }
-
-    public void markAsDone(Request r) {
-        r.setStatus(RequestStatus.DONE);
-        System.out.println("Request marked as done: " + r.getDescription());
-    }
-
+    /** NEW → VIEWED */
     public void viewRequest(Request r) {
         if (r.getStatus() == RequestStatus.NEW) {
             r.setStatus(RequestStatus.VIEWED);
+            System.out.println("Viewing: " + r);
+        } else {
+            System.out.println("Request is already " + r.getStatus());
         }
-        System.out.println("Viewing request: " + r.toString());
+    }
+
+    /** VIEWED → ACCEPTED */
+    public boolean acceptRequest(Request r) {
+        if (r.getStatus() != RequestStatus.VIEWED) {
+            System.out.println("Cannot accept — request must be in VIEWED state, currently: " + r.getStatus());
+            return false;
+        }
+        r.setStatus(RequestStatus.ACCEPTED);
+        System.out.println("Accepted: " + r.getDescription());
+        return true;
+    }
+
+    /** VIEWED → REJECTED */
+    public boolean rejectRequest(Request r) {
+        if (r.getStatus() != RequestStatus.VIEWED) {
+            System.out.println("Cannot reject — request must be in VIEWED state, currently: " + r.getStatus());
+            return false;
+        }
+        r.setStatus(RequestStatus.REJECTED);
+        System.out.println("Rejected: " + r.getDescription());
+        return true;
+    }
+
+    /** ACCEPTED → DONE */
+    public boolean markAsDone(Request r) {
+        if (r.getStatus() != RequestStatus.ACCEPTED) {
+            System.out.println("Cannot mark done — request must be ACCEPTED, currently: " + r.getStatus());
+            return false;
+        }
+        r.setStatus(RequestStatus.DONE);
+        System.out.println("Done: " + r.getDescription());
+        return true;
     }
 
     @Override
