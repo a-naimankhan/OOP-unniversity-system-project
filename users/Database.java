@@ -22,22 +22,18 @@ import course.Course;
 import mark.Mark;
 import other.News;
 import other.NewsTopic;
-import other.LogEntry;
 import research.Researcher;
 import research.ResearchPaper;
 import research.Journal;
-import research.Observer;
-import research.Subject;
 import other.Request;
 
-public final class Database implements Serializable, Subject {
+public final class Database implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private final static String BASEPATH = "data" + File.separator;
     private static Database instance = new Database(BASEPATH);
     private String value;
     private static Researcher currentTopResearcher = null;
-    private List<Observer> logObservers = new ArrayList<>();
 
     static {
         try {
@@ -81,8 +77,6 @@ public final class Database implements Serializable, Subject {
 	public static Vector<String> comments = new Vector<String>();
 	public static Vector<Journal> journals = new Vector<Journal>();
 	public static Vector<Request> requests = new Vector<Request>();
-    public static Vector<LogEntry> logs = new Vector<LogEntry>();
-
 
 	/**
 	 * Collects all researchers from users list
