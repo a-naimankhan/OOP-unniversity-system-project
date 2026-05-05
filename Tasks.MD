@@ -197,3 +197,44 @@ if (total >= 95 ...
 | Part A   | 14-я неделя (диаграммы)      |
 | Part B   | 15-я неделя (практика) — черновик; финальный экзамен — финальная версия |
 | Part C   | Финальный экзамен            |
+
+---
+
+## 🔍 Code Review Action Items (2026-05-04)
+
+### 🔥 P0 — Демка упадёт / сломается без этих фиксов
+- [x] **`User implements Serializable`** — `users/User.java:15`. Также сменил `Comparable<Object>` → `Comparable<User>`, добавил `serialVersionUID`.
+- [x] **`Time implements Serializable`** — `other/Time.java:6`. + поля переведены в `private`.
+- [x] **Убрать хардкод `C:\OOP\test\`** — `users/Database.java`. Теперь `data/` в рабочей директории, авто-создаётся через `Files.createDirectories`.
+- [x] **Починить `compareTo`, возвращающий 0 при разных именах** — `Student/Teacher/Employee.compareTo` теперь возвращают `super.compareTo` при разных именах, делают tie-break по GPA / rating / salary.
+- [x] **Убрать баги `if(...);` в демках** — `StudentDemo.register/drop` и `ManagerDemo.addCourse/removeCourse/addNews/removeNews/updateNews/assignCourse` переписаны с настоящими блоками. Также фикснут баг `addCourse` (потерянный `courseCode`).
+- [x] **Добавить `Database.load()`** — теперь восстанавливает все 12 коллекций (включая journals/requests/logs).
+- [x] **Защитить `Student.getGpa()` от `cnt == 0`** — `cnt == 0 → return 0.0` (раньше делил на ноль и Transcript показывал `NaN`).
+
+### ⚠️ P1 — Требования ТЗ
+- [ ] `CourseType` enum (MAJOR/MINOR/FREE_ELECTIVE) + заменить `boolean isElective`
+- [ ] `StudentOrganization` класс + `Student.organizations`
+- [ ] `Student.failCount` мапа + бросать `MaxFailException` в `registerCourse` после 3 фейлов
+- [ ] `Student.registerCourse` бросает `CreditLimitExceededException` (а не `return false`)
+- [ ] `Teacher` (хотя бы PROFESSOR) implements `Researcher`
+- [ ] `Database.logs` + `Admin.viewLogs()` + логирование `addUser/removeUser`
+- [ ] `Database.serializeJournals` / `serializeRequests`
+- [ ] `Request.signedBy` + `User.createRequest()` чтобы запросы вообще появлялись
+- [ ] `Manager.generateReport()` — академическая статистика
+- [ ] `Course.targetYear`, `Course.targetDegree`
+- [ ] `Teacher.generateReport(Course)` — статистика оценок (avg/min/max)
+- [ ] Бросать `LowHIndexException` где-то осмысленно
+- [ ] Подключить `LanguageManager.getTranslation` в реальные меню демок
+- [ ] Починить `Teacher.sendComplaint` — сейчас `Complaint` создаётся и выбрасывается
+- [ ] Рефактор Singleton: либо удалить `getInstance()`, либо перенести state в instance
+
+### 🧹 P2 — Качество кода
+- [ ] Убрать `prerequisites` из `Course.equals/hashCode` (риск StackOverflow)
+- [ ] Убрать derived/mutable поля из `Student/Teacher.equals/hashCode`
+- [ ] Починить математику `Teacher.setRating`
+- [ ] Починить `Teacher.putMark` ветку FIRST (мутация, не замена)
+- [ ] Валидация переходов в `TechSupportSpecialist` (NEW→VIEWED→ACCEPTED→DONE)
+- [ ] Null-гарды в `ResearchPaper.getCitation` (пустые authors, null date)
+- [ ] Централизованная аутентификация + логин-флоу в `Main`
+- [ ] Демки: `ResearcherDemo`, `TechSupportDemo`, `GraduateStudentDemo`
+- [ ] Удалить мёртвое поле `Mark.finalAttestation`
