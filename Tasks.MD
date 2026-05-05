@@ -226,8 +226,8 @@ if (total >= 95 ...
 - [x] Бросать `LowHIndexException` — в `ResearchProject.addParticipant`: исследователь с бумагами но h-index=0 не может войти в проект
 - [x] Починить `Teacher.sendComplaint` — теперь создаёт `Request`, кладёт в `Database.requests`, логирует через `Database.log()`
 - [x] Рефактор Singleton — `public Database()` → `private Database()`, паттерн теперь не нарушается
-- [ ] **Подключить `LanguageManager.getTranslation` в реальные меню демок** — ⬅ единственное незакрытое в P1
-- [ ] **Обновить `Main.java`** под новые checked exceptions (`registerCourse` бросает 2 исключения, `addParticipant` — теперь тоже `LowHIndexException`)
+- [ ] **Подключить `LanguageManager.getTranslation` в реальные меню демок** — откладывается в P2 (меню демок ещё не написаны)
+- [x] **Обновить `Main.java`** под новые checked exceptions (`registerCourse` бросает 2 исключения, `addParticipant` — `LowHIndexException`)
 
 ### 🧹 P2 — Качество кода
 - [ ] Убрать `prerequisites` из `Course.equals/hashCode` (риск StackOverflow)
