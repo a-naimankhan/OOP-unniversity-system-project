@@ -5,39 +5,55 @@ import java.util.Objects;
 import java.util.Vector;
 
 import users.Database;
+import users.DegreeStudent;
 import users.FacultyType;
 import users.Teacher;
 
 public class Course implements Serializable{
-	
+
 	private static final long serialVersionUID = 1L;
 
 	private String courseName;
 	private Period semester;
 	private String courseCode;
 	private int credit;
-	private boolean isElective;
+	private CourseType courseType;
 	private int studentLimit;
 	private Course prerequisites;
 	private FacultyType department;
+	private int targetYear;
+	private DegreeStudent targetDegree;
 	private Vector<Teacher> teachers;
-	
+
 	{
 		teachers = new Vector<Teacher>();
 	}
-	
+
 	public Course() {
-		
+		this.courseType = CourseType.MAJOR;
 	}
-	public Course(String courseName, Period semester, String courseCode, int credit, boolean isElective, int studentLimit, Course prerequisites, FacultyType department) {
+
+	public Course(String courseName, Period semester, String courseCode, int credit,
+			CourseType courseType, int studentLimit, Course prerequisites, FacultyType department,
+			int targetYear, DegreeStudent targetDegree) {
 		this.courseName = courseName;
 		this.semester = semester;
 		this.courseCode = courseCode;
 		this.credit = credit;
-		this.isElective = isElective;
+		this.courseType = courseType;
 		this.studentLimit = studentLimit;
 		this.prerequisites = prerequisites;
 		this.department = department;
+		this.targetYear = targetYear;
+		this.targetDegree = targetDegree;
+	}
+
+	// Backwards-compatible constructor — boolean isElective is mapped to FREE_ELECTIVE / MAJOR
+	public Course(String courseName, Period semester, String courseCode, int credit,
+			boolean isElective, int studentLimit, Course prerequisites, FacultyType department) {
+		this(courseName, semester, courseCode, credit,
+				isElective ? CourseType.FREE_ELECTIVE : CourseType.MAJOR,
+				studentLimit, prerequisites, department, 0, null);
 	}
 	
 	
@@ -93,11 +109,26 @@ public class Course implements Serializable{
 	public void setCredit(int credit) {
 		this.credit = credit;
 	}
-	public boolean isElective() {
-		return isElective;
+	public CourseType getCourseType() {
+		return courseType;
 	}
-	public void setElective(boolean isElective) {
-		this.isElective = isElective;
+	public void setCourseType(CourseType courseType) {
+		this.courseType = courseType;
+	}
+	public boolean isElective() {
+		return courseType == CourseType.FREE_ELECTIVE || courseType == CourseType.MINOR;
+	}
+	public int getTargetYear() {
+		return targetYear;
+	}
+	public void setTargetYear(int targetYear) {
+		this.targetYear = targetYear;
+	}
+	public DegreeStudent getTargetDegree() {
+		return targetDegree;
+	}
+	public void setTargetDegree(DegreeStudent targetDegree) {
+		this.targetDegree = targetDegree;
 	}
 	public Course getPrerequisites() {
 		return prerequisites;
@@ -126,12 +157,13 @@ public class Course implements Serializable{
 	@Override
 	public String toString() {
 		return "Course [courseName=" + courseName + ", semester=" + semester + ", courseCode=" + courseCode
-				+ ", credit=" + credit + ", isElective=" + isElective + ", studentLimit=" + studentLimit
-				+ ", prerequisites=" + prerequisites + ", department=" + department + "]";
+				+ ", credit=" + credit + ", type=" + courseType + ", studentLimit=" + studentLimit
+				+ ", targetYear=" + targetYear + ", targetDegree=" + targetDegree + ", department=" + department + "]";
 	}
 	@Override
 	public int hashCode() {
-		return Objects.hash(courseCode, courseName, credit, department, isElective, prerequisites, semester);
+		// courseCode alone — including prerequisites caused stack overflow on deep chains
+		return Objects.hash(courseCode);
 	}
 	@Override
 	public boolean equals(Object obj) {
@@ -142,9 +174,7 @@ public class Course implements Serializable{
 		if (getClass() != obj.getClass())
 			return false;
 		Course other = (Course) obj;
-		return Objects.equals(courseCode, other.courseCode) && Objects.equals(courseName, other.courseName)
-				&& credit == other.credit && department == other.department && isElective == other.isElective
-				&& Objects.equals(prerequisites, other.prerequisites) && semester == other.semester;
+		return Objects.equals(courseCode, other.courseCode);
 	}
 	
 
