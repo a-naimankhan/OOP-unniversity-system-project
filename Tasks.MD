@@ -212,21 +212,22 @@ if (total >= 95 ...
 - [x] **Защитить `Student.getGpa()` от `cnt == 0`** — `cnt == 0 → return 0.0` (раньше делил на ноль и Transcript показывал `NaN`).
 
 ### ⚠️ P1 — Требования ТЗ
-- [ ] `CourseType` enum (MAJOR/MINOR/FREE_ELECTIVE) + заменить `boolean isElective`
-- [ ] `StudentOrganization` класс + `Student.organizations`
-- [ ] `Student.failCount` мапа + бросать `MaxFailException` в `registerCourse` после 3 фейлов
-- [ ] `Student.registerCourse` бросает `CreditLimitExceededException` (а не `return false`)
-- [ ] `Teacher` (хотя бы PROFESSOR) implements `Researcher`
-- [ ] `Database.logs` + `Admin.viewLogs()` + логирование `addUser/removeUser`
-- [ ] `Database.serializeJournals` / `serializeRequests`
-- [ ] `Request.signedBy` + `User.createRequest()` чтобы запросы вообще появлялись
-- [ ] `Manager.generateReport()` — академическая статистика
-- [ ] `Course.targetYear`, `Course.targetDegree`
-- [ ] `Teacher.generateReport(Course)` — статистика оценок (avg/min/max)
-- [ ] Бросать `LowHIndexException` где-то осмысленно
-- [ ] Подключить `LanguageManager.getTranslation` в реальные меню демок
-- [ ] Починить `Teacher.sendComplaint` — сейчас `Complaint` создаётся и выбрасывается
-- [ ] Рефактор Singleton: либо удалить `getInstance()`, либо перенести state в instance
+- [x] `CourseType` enum (MAJOR/MINOR/FREE_ELECTIVE) + заменить `boolean isElective` — `course/CourseType.java` создан; `Course.java` обновлён (обратно-совместимый конструктор сохранён)
+- [x] `StudentOrganization` класс + `Student.organizations` — `users/StudentOrganization.java` создан; `Student` получил `organizations`, `joinOrganization/leaveOrganization/becomeHead`
+- [x] `Student.failCount` мапа + бросать `MaxFailException` в `registerCourse` после 3 фейлов — `Student.java` полностью переписан
+- [x] `Student.registerCourse` бросает `CreditLimitExceededException` (а не `return false`) — там же; `creditLimit` стал `private static final MAX_CREDITS`
+- [x] `Teacher` (хотя бы PROFESSOR) implements `Researcher` — `users/ResearchTeacher.java` создан (`extends Teacher implements Researcher`)
+- [x] `Database.logs` + `Admin.viewLogs()` + логирование `addUser/removeUser` — `Database.log()` добавлен; `Admin.java` полностью переписан с логами
+- [x] `Database.serializeJournals` / `serializeRequests` — добавлены `serializeJournals/Requests/Logs` + `Database.load()` восстанавливает все 12 коллекций
+- [x] `Request.signedBy` + `User.createRequest()` — `Request.java` получил поле `signedBy` + `signBy(User)`; `User.createRequest()` добавлен
+- [x] `Manager.generateReport()` — академическая статистика по GPA, топ-студент, курсы с фейлами; фильтр по `FacultyType`
+- [x] `Course.targetYear`, `Course.targetDegree` — добавлены в `Course.java`; новый полный конструктор + обратно-совместимый
+- [x] `Teacher.generateReport(Course)` — статистика avg/min/max/passing по курсу
+- [x] Бросать `LowHIndexException` — в `ResearchProject.addParticipant`: исследователь с бумагами но h-index=0 не может войти в проект
+- [x] Починить `Teacher.sendComplaint` — теперь создаёт `Request`, кладёт в `Database.requests`, логирует через `Database.log()`
+- [x] Рефактор Singleton — `public Database()` → `private Database()`, паттерн теперь не нарушается
+- [ ] **Подключить `LanguageManager.getTranslation` в реальные меню демок** — ⬅ единственное незакрытое в P1
+- [ ] **Обновить `Main.java`** под новые checked exceptions (`registerCourse` бросает 2 исключения, `addParticipant` — теперь тоже `LowHIndexException`)
 
 ### 🧹 P2 — Качество кода
 - [ ] Убрать `prerequisites` из `Course.equals/hashCode` (риск StackOverflow)
