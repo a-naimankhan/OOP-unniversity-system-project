@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import exceptions.LowHIndexException;
 import exceptions.NotResearcherException;
 
 public class ResearchProject implements Serializable {
@@ -25,12 +26,19 @@ public class ResearchProject implements Serializable {
 		this.participants = new ArrayList<>();
 	}
 
-	public void addParticipant(Object person) throws NotResearcherException {
+	public void addParticipant(Object person) throws NotResearcherException, LowHIndexException {
 		if (!(person instanceof Researcher)) {
 			throw new NotResearcherException(
 				"Person is not a Researcher and cannot join the project: " + topic);
 		}
-		participants.add((Researcher) person);
+		Researcher r = (Researcher) person;
+		// A researcher with no citations at all (h-index == 0) and at least one paper
+		// cannot join a project — they have not established a research track record.
+		if (!r.getResearchPapers().isEmpty() && r.calculateHIndex() == 0) {
+			throw new LowHIndexException(
+				"Researcher has papers but h-index is 0 (no citations) — cannot join project: " + topic);
+		}
+		participants.add(r);
 	}
 
 	public void addPaper(ResearchPaper paper) {

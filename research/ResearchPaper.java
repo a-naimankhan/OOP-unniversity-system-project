@@ -1,6 +1,7 @@
 package research;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -18,8 +19,7 @@ public class ResearchPaper implements Serializable, Comparable<ResearchPaper> {
 	private int volume;
 	private int number;
 
-	public ResearchPaper() {
-	}
+	public ResearchPaper() {}
 
 	public ResearchPaper(String title, List<String> authors, String journal,
 			int pages, Date date, String doi, int citations, int volume, int number) {
@@ -35,31 +35,44 @@ public class ResearchPaper implements Serializable, Comparable<ResearchPaper> {
 	}
 
 	public String getCitation(Format f) {
+		if (authors == null || authors.isEmpty()) {
+			return "[No authors available for " + title + "]";
+		}
+		if (date == null) {
+			return "[No date available for " + title + "]";
+		}
+
 		String authorsStr = String.join(", ", authors);
+		@SuppressWarnings("deprecation")
 		int year = date.getYear() + 1900;
 
 		if (f == Format.PLAIN_TEXT) {
 			return authorsStr + ", \"" + title + ",\" " + journal
 					+ ", vol. " + volume + ", no. " + number
 					+ ", pp. " + pages + ", " + year
-					+ ", doi: " + doi + ".";
+					+ ", doi: " + (doi != null ? doi : "N/A") + ".";
 		} else {
-			String key = authors.get(0).split(" ")[0].toLowerCase() + year;
+			// BibTeX
+			String firstAuthorLastName = authors.get(0).split(" ")[0].toLowerCase();
+			String key = firstAuthorLastName + year;
 			return "@ARTICLE{" + key + ",\n"
 					+ "  author={" + authorsStr + "},\n"
-					+ "  journal={" + journal + "},\n"
+					+ "  journal={" + (journal != null ? journal : "") + "},\n"
 					+ "  title={" + title + "},\n"
 					+ "  year={" + year + "},\n"
 					+ "  volume={" + volume + "},\n"
 					+ "  number={" + number + "},\n"
 					+ "  pages={" + pages + "},\n"
-					+ "  doi={" + doi + "}\n"
+					+ "  doi={" + (doi != null ? doi : "") + "}\n"
 					+ "}";
 		}
 	}
 
 	@Override
 	public int compareTo(ResearchPaper other) {
+		if (this.date == null && other.date == null) return 0;
+		if (this.date == null) return -1;
+		if (other.date == null) return 1;
 		return this.date.compareTo(other.date);
 	}
 
