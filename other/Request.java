@@ -12,7 +12,6 @@ public class Request implements Serializable {
     private User signedBy;
     private String date;
     private UrgencyLevel urgency;
-    private User signedBy;
 
     public Request(String description, User createdBy, String date, UrgencyLevel urgency) {
         this.description = description;

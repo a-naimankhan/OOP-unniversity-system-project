@@ -5,7 +5,10 @@ import java.util.Date;
 
 import course.Course;
 import course.Period;
+import exceptions.CreditLimitExceededException;
 import exceptions.InvalidSupervisorException;
+import exceptions.LowHIndexException;
+import exceptions.MaxFailException;
 import exceptions.NotResearcherException;
 import mark.AttestationType;
 import research.*;
@@ -59,12 +62,16 @@ public class Main {
 
 		// --- Course registration ---
 		System.out.println("\n=== Course Registration ===");
-		boolean reg1 = s1.registerCourse(oop);
-		boolean reg2 = s1.registerCourse(algo);
-		boolean reg3 = s2.registerCourse(oop);
-		System.out.println("Aidar registered OOP: " + reg1);
-		System.out.println("Aidar registered Algo: " + reg2);
-		System.out.println("Marat registered OOP: " + reg3);
+		try {
+			boolean reg1 = s1.registerCourse(oop);
+			boolean reg2 = s1.registerCourse(algo);
+			boolean reg3 = s2.registerCourse(oop);
+			System.out.println("Aidar registered OOP: " + reg1);
+			System.out.println("Aidar registered Algo: " + reg2);
+			System.out.println("Marat registered OOP: " + reg3);
+		} catch (CreditLimitExceededException | MaxFailException e) {
+			System.out.println("Registration error: " + e.getMessage());
+		}
 		System.out.println("Aidar total credits: " + s1.getTotalCredit());
 
 		// --- Put marks ---
