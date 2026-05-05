@@ -1,11 +1,14 @@
 package other;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Time{
-	int hour;
-	int minute;
-	int second;
+public class Time implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	private int hour;
+	private int minute;
+	private int second;
 	
 	public Time(int hour, int minute, int second){
 		this.hour = hour;

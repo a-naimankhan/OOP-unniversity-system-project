@@ -5,12 +5,13 @@ import users.User;
 
 public class Request implements Serializable {
     private static final long serialVersionUID = 1L;
-    
+
     private String description;
     private RequestStatus status;
     private User createdBy;
     private String date;
     private UrgencyLevel urgency;
+    private User signedBy;
 
     public Request(String description, User createdBy, String date, UrgencyLevel urgency) {
         this.description = description;
@@ -20,36 +21,34 @@ public class Request implements Serializable {
         this.status = RequestStatus.NEW;
     }
 
-    public UrgencyLevel getUrgency() {
-        return urgency;
-    }
+    public UrgencyLevel getUrgency() { return urgency; }
+    public void setUrgency(UrgencyLevel urgency) { this.urgency = urgency; }
 
-    public void setUrgency(UrgencyLevel urgency) {
-        this.urgency = urgency;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public String getDescription() {
-        return description;
-    }
+    public RequestStatus getStatus() { return status; }
+    public void setStatus(RequestStatus status) { this.status = status; }
 
-    public RequestStatus getStatus() {
-        return status;
-    }
+    public User getCreatedBy() { return createdBy; }
 
-    public void setStatus(RequestStatus status) {
-        this.status = status;
-    }
+    public String getDate() { return date; }
 
-    public User getCreatedBy() {
-        return createdBy;
-    }
+    public User getSignedBy() { return signedBy; }
 
-    public String getDate() {
-        return date;
+    public void signBy(User official) {
+        this.signedBy = official;
     }
 
     @Override
     public String toString() {
-        return "[" + status + "] " + description + " (by " + createdBy.getFullName() + " on " + date + ")";
+        StringBuilder sb = new StringBuilder();
+        sb.append("[").append(status).append("] [").append(urgency).append("] ");
+        sb.append(description);
+        sb.append(" (by ").append(createdBy.getFullName()).append(" on ").append(date).append(")");
+        if (signedBy != null) {
+            sb.append(" [signed by ").append(signedBy.getFullName()).append("]");
+        }
+        return sb.toString();
     }
 }
