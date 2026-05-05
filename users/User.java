@@ -1,5 +1,6 @@
 package users;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Vector;
 import java.util.ArrayList;
@@ -8,10 +9,14 @@ import java.util.List;
 import other.News;
 import other.Language;
 import other.LanguageManager;
+import other.Request;
+import other.UrgencyLevel;
 import research.Observer;
 import research.Journal;
 
-public abstract class User implements Comparable<Object>, Observer {
+public abstract class User implements Serializable, Comparable<User>, Observer {
+
+	private static final long serialVersionUID = 1L;
 	private String fullName;
 	private String username;
 	private String password;
@@ -87,10 +92,22 @@ public abstract class User implements Comparable<Object>, Observer {
 	}
 	
 	/**
-	 * we view News
+	 * Creates a support request and adds it to the Database.
+	 */
+	public Request createRequest(String description, UrgencyLevel urgency) {
+		Request r = new Request(description, this, new java.util.Date().toString(), urgency);
+		Database.requests.add(r);
+		Database.log("REQUEST created by " + username + ": " + description);
+		return r;
+	}
+
+	/**
+	 * we view News (sorted: pinned RESEARCH first, then by date desc)
 	 */
 	public static Vector<News> viewNews(){
-		return Database.news;
+		Vector<News> sorted = new Vector<>(Database.news);
+		java.util.Collections.sort(sorted);
+		return sorted;
 	}
 	
 	/**
@@ -173,8 +190,11 @@ public abstract class User implements Comparable<Object>, Observer {
 	/**
 	 * we compare full names of 2 objects
 	 */
-	public int compareTo(Object o) {
-		User u = (User)o;
+	@Override
+	public int compareTo(User u) {
+		if (u == null) return 1;
+		if (this.fullName == null) return (u.fullName == null) ? 0 : -1;
+		if (u.fullName == null) return 1;
 		return fullName.compareTo(u.fullName);
 	}
 	
