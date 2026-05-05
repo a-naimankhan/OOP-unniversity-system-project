@@ -1,5 +1,6 @@
 package users;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -7,6 +8,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,14 +30,29 @@ import other.Request;
 public final class Database implements Serializable{
 
     private static final long serialVersionUID = 1L;
-    private final static String BASEPATH = "C:\\OOP\\test\\";
+    private final static String BASEPATH = "data" + File.separator;
     private static Database instance = new Database(BASEPATH);
     private String value;
     private static Researcher currentTopResearcher = null;
 
-    public Database() {
+    static {
+        try {
+            Files.createDirectories(Paths.get(BASEPATH));
+        } catch (IOException e) {
+            System.err.println("Failed to create data directory: " + e.getMessage());
+        }
+    }
 
-	}
+    public static Vector<String> logs = new Vector<String>();
+
+    public static synchronized void log(String action) {
+        String entry = "[" + new java.util.Date() + "] " + action;
+        logs.add(entry);
+    }
+
+	// private — Singleton; use getInstance()
+	private Database() {}
+
 	private Database(String value) {
 		this.value = value;
 	}
@@ -116,6 +135,122 @@ public final class Database implements Serializable{
 		serializeMark();
 		serializeManager();
 		serializeNews();
+		serializeJournals();
+		serializeRequests();
+		serializeLogs();
+	}
+
+	/**
+	 * Loads all serialized state back into the static collections.
+	 * Silently ignores files that don't exist yet (first run).
+	 */
+	public static void load() {
+		try {
+			Vector<User> u = deserializeUser();
+			if (u != null) users = u;
+			Vector<Student> s = deserializeStudent();
+			if (s != null) students = s;
+			Vector<Teacher> t = deserializeTeacher();
+			if (t != null) teachers = t;
+			Vector<Admin> a = deserializeAdmin();
+			if (a != null) admins = a;
+			Vector<Employee> e = deserializeEmployee();
+			if (e != null) employees = e;
+			Vector<Manager> m = deserializeManager();
+			if (m != null) managers = m;
+			Vector<Course> c = deserializeCourse();
+			if (c != null) courses = c;
+			Vector<Mark> mk = deserializeMark();
+			if (mk != null) marks = mk;
+			Vector<News> n = deserializeNews();
+			if (n != null) news = n;
+			Vector<Journal> j = deserializeJournals();
+			if (j != null) journals = j;
+			Vector<Request> r = deserializeRequests();
+			if (r != null) requests = r;
+			Vector<String> l = deserializeLogs();
+			if (l != null) logs = l;
+		} catch (ClassNotFoundException ex) {
+			System.err.println("Failed to load database: " + ex.getMessage());
+		}
+	}
+
+	// Journals
+	public static void serializeJournals() {
+		try (FileOutputStream fis = new FileOutputStream(BASEPATH + "journals.txt")){
+			ObjectOutputStream oos = new ObjectOutputStream(fis);
+			oos.writeObject(journals);
+			oos.flush();
+			oos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static Vector<Journal> deserializeJournals() throws ClassNotFoundException {
+		try (FileInputStream fs = new FileInputStream(BASEPATH + "journals.txt")){
+			ObjectInputStream ois = new ObjectInputStream(fs);
+			@SuppressWarnings("unchecked")
+			Vector<Journal> j = (Vector<Journal>)ois.readObject();
+			return j;
+		} catch (FileNotFoundException e) {
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	// Requests
+	public static void serializeRequests() {
+		try (FileOutputStream fis = new FileOutputStream(BASEPATH + "requests.txt")){
+			ObjectOutputStream oos = new ObjectOutputStream(fis);
+			oos.writeObject(requests);
+			oos.flush();
+			oos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static Vector<Request> deserializeRequests() throws ClassNotFoundException {
+		try (FileInputStream fs = new FileInputStream(BASEPATH + "requests.txt")){
+			ObjectInputStream ois = new ObjectInputStream(fs);
+			@SuppressWarnings("unchecked")
+			Vector<Request> r = (Vector<Request>)ois.readObject();
+			return r;
+		} catch (FileNotFoundException e) {
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	// Logs
+	public static void serializeLogs() {
+		try (FileOutputStream fis = new FileOutputStream(BASEPATH + "logs.txt")){
+			ObjectOutputStream oos = new ObjectOutputStream(fis);
+			oos.writeObject(logs);
+			oos.flush();
+			oos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static Vector<String> deserializeLogs() throws ClassNotFoundException {
+		try (FileInputStream fs = new FileInputStream(BASEPATH + "logs.txt")){
+			ObjectInputStream ois = new ObjectInputStream(fs);
+			@SuppressWarnings("unchecked")
+			Vector<String> l = (Vector<String>)ois.readObject();
+			return l;
+		} catch (FileNotFoundException e) {
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public static void serializeUser() {
