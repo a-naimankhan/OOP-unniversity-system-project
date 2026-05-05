@@ -6,8 +6,10 @@ import java.util.Objects;
 
 import course.Course;
 import other.News;
+import other.Request;
+import other.RequestStatus;
 
-public class Manager extends Employee implements Serializable, Comparable<Object>{
+public class Manager extends Employee implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -53,6 +55,58 @@ public class Manager extends Employee implements Serializable, Comparable<Object
 	
 	public boolean approveRegistration(Student student, Course course) {
 		return true;
+	}
+
+	/** Academic performance report — optionally filtered by faculty (pass null for all). */
+	public String generateReport(FacultyType faculty) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("=== Academic Report");
+		if (faculty != null) sb.append(" [").append(faculty).append("]");
+		sb.append(" ===\n");
+
+		double totalGpa = 0;
+		int count = 0;
+		Student topStudent = null;
+		double topGpa = -1;
+
+		for (Student s : Database.students) {
+			if (faculty != null && s.getFaculty() != faculty) continue;
+			double gpa = s.getGpa();
+			totalGpa += gpa;
+			count++;
+			if (gpa > topGpa) { topGpa = gpa; topStudent = s; }
+		}
+
+		if (count == 0) return sb.append("  No students found.\n").toString();
+
+		sb.append("  Total students : ").append(count).append("\n");
+		sb.append("  Average GPA    : ").append(String.format("%.2f", totalGpa / count)).append("\n");
+		if (topStudent != null) {
+			sb.append("  Top student    : ").append(topStudent.getFullName())
+			  .append(" (GPA ").append(String.format("%.2f", topGpa)).append(")\n");
+		}
+
+		sb.append("  Courses with fails:\n");
+		for (Course c : Database.courses) {
+			if (faculty != null && c.getDepartment() != faculty) continue;
+			int fails = 0;
+			for (Student s : Database.students) {
+				if (s.getFailCount().getOrDefault(c, 0) > 0) fails++;
+			}
+			if (fails > 0)
+				sb.append("    ").append(c.getCourseName()).append(": ").append(fails).append(" student(s)\n");
+		}
+
+		return sb.toString();
+	}
+
+	/** View signed employee requests visible to this manager's role. */
+	public java.util.List<Request> viewSignedRequests() {
+		java.util.List<Request> result = new java.util.ArrayList<>();
+		for (Request r : Database.requests) {
+			if (r.getSignedBy() != null) result.add(r);
+		}
+		return result;
 	}
 	
 	public String viewStudentsByName() {
