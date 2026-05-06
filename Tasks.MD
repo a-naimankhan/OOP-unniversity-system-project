@@ -116,16 +116,16 @@
   - `Admin.viewLogs()` — возвращает список логов
 - [x] `Admin.addUser()` / `removeUser()` должны логировать действие
 
-### ❌ Приоритет 5: Console Demo (Part C) — НЕ СДЕЛАНО
+### ✅ Приоритет 5: Console Demo (Part C) — СДЕЛАНО
 
-- [ ] Обновить `StudentDemo` — добавить организации, Transcript
-- [ ] Обновить `TeacherDemo` — добавить research, отчёты
-- [ ] Обновить `ManagerDemo` — статистика, отчёты
-- [ ] Обновить `AdminDemo` — логи
-- [ ] Добавить `ResearcherDemo` (публикация, h-index, comparators)
-- [ ] Добавить `TechSupportDemo`
-- [ ] Добавить `GraduateStudentDemo`
-- [ ] `Main.java` — полный flow с аутентификацией (login → меню по роли)
+- [x] Обновить `StudentDemo` — добавить организации, Transcript
+- [x] Обновить `TeacherDemo` — добавить research, отчёты
+- [x] Обновить `ManagerDemo` — статистика, отчёты
+- [x] Обновить `AdminDemo` — логи
+- [x] Добавить `ResearcherDemo` (публикация, h-index, comparators)
+- [x] Добавить `TechSupportDemo`
+- [x] Добавить `GraduateStudentDemo`
+- [x] `Main.java` — полный flow с аутентификацией (login → меню по роли)
 
 ---
 
@@ -174,7 +174,7 @@ if (total >= 95 ...
 - [x] Serialization (Database)
 - [x] Comparable + Comparators
 - [ ] `CourseType` enum (MAJOR, MINOR, FREE_ELECTIVE)
-- [ ] `StudentOrganization`
+- [x] `StudentOrganization`
 - [ ] Teacher implements Researcher (для профессоров)
 - [ ] Исправить баг в `Mark.convertToLetterMark()`
 - [x] `Transcript` класс
@@ -230,12 +230,12 @@ if (total >= 95 ...
 - [x] **Обновить `Main.java`** под новые checked exceptions (`registerCourse` бросает 2 исключения, `addParticipant` — `LowHIndexException`)
 
 ### 🧹 P2 — Качество кода
-- [ ] Убрать `prerequisites` из `Course.equals/hashCode` (риск StackOverflow)
-- [ ] Убрать derived/mutable поля из `Student/Teacher.equals/hashCode`
-- [ ] Починить математику `Teacher.setRating`
-- [ ] Починить `Teacher.putMark` ветку FIRST (мутация, не замена)
-- [ ] Валидация переходов в `TechSupportSpecialist` (NEW→VIEWED→ACCEPTED→DONE)
-- [ ] Null-гарды в `ResearchPaper.getCitation` (пустые authors, null date)
-- [ ] Централизованная аутентификация + логин-флоу в `Main`
-- [ ] Демки: `ResearcherDemo`, `TechSupportDemo`, `GraduateStudentDemo`
-- [ ] Удалить мёртвое поле `Mark.finalAttestation`
+- [x] Убрать `prerequisites` из `Course.equals/hashCode` (риск StackOverflow)
+- [x] Убрать derived/mutable поля из `Student/Teacher.equals/hashCode`
+- [x] Починить математику `Teacher.setRating`
+- [x] Починить `Teacher.putMark` ветку FIRST (мутация, не замена)
+- [x] Валидация переходов в `TechSupportSpecialist` (NEW→VIEWED→ACCEPTED→DONE)
+- [x] Null-гарды в `ResearchPaper.getCitation` (пустые authors, null date)
+- [x] Централизованная аутентификация + логин-флоу в `Main`
+- [x] Демки: `ResearcherDemo`, `TechSupportDemo`, `GraduateStudentDemo`
+- [x] Удалить мёртвое поле `Mark.finalAttestation`
