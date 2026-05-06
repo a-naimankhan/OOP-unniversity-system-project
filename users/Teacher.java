@@ -126,12 +126,12 @@ public class Teacher extends Employee implements Serializable {
 	public void setDepartment(FacultyType department) { this.department = department; }
 
 	public double getRating() {
-		return (ratedCnt == 0) ? 0 : rating / ratedCnt;
+		return rating;
 	}
 
 	public void setRating(double newRating) {
-		// accumulate the raw sum; getRating() divides on demand
-		this.rating += newRating;
+		// Maintain running average. Increment ratedCnt after computing new average.
+		this.rating = (this.rating * this.ratedCnt + newRating) / (this.ratedCnt + 1);
 		this.ratedCnt++;
 	}
 
