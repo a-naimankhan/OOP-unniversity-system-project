@@ -145,20 +145,17 @@ public class Teacher extends Employee implements Serializable {
 
 	@Override
 	public int hashCode() {
-		// rating and officeHour are mutable — use only stable identity fields
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + Objects.hash(degree, department);
-		return result;
+		// Use stable identity field: username only
+		return Objects.hash(getUsername());
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) return true;
-		if (!super.equals(obj)) return false;
+		if (obj == null) return false;
 		if (getClass() != obj.getClass()) return false;
 		Teacher other = (Teacher) obj;
-		return degree == other.degree && department == other.department;
+		return Objects.equals(getUsername(), other.getUsername());
 	}
 
 	@Override

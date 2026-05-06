@@ -162,14 +162,14 @@ public class Student extends User implements Serializable {
 
 	@Override
 	public int hashCode() {
-		// gpa and totalCredit are derived/mutable — use only stable identity fields
-		return Objects.hash(super.hashCode(), id);
+		// Use stable identity field: id only
+		return Objects.hash(id);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) return true;
-		if (!super.equals(obj)) return false;
+		if (obj == null) return false;
 		if (getClass() != obj.getClass()) return false;
 		Student other = (Student) obj;
 		return Objects.equals(id, other.id);
