@@ -16,6 +16,9 @@ import exceptions.NotResearcherException;
 import mark.AttestationType;
 import research.*;
 import users.*;
+import demo.TechSupportDemo;
+import demo.GraduateStudentDemo;
+import demo.ResearcherDemo;
 
 public class Main {
 	public static void main(String[] args) {
