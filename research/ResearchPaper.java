@@ -35,31 +35,38 @@ public class ResearchPaper implements Serializable, Comparable<ResearchPaper> {
 	}
 
 	public String getCitation(Format f) {
-		if (authors == null || authors.isEmpty()) {
-			return "[No authors available for " + title + "]";
-		}
+		// Null guards: authors -> "Unknown Author", date -> "n.d."
+		String authorsStr = (authors == null || authors.isEmpty()) ? "Unknown Author" : String.join(", ", authors);
+		String yearStr;
+		String keyYear;
 		if (date == null) {
-			return "[No date available for " + title + "]";
+			yearStr = "n.d.";
+			keyYear = "nd";
+		} else {
+			@SuppressWarnings("deprecation")
+			int year = date.getYear() + 1900;
+			yearStr = String.valueOf(year);
+			keyYear = yearStr;
 		}
-
-		String authorsStr = String.join(", ", authors);
-		@SuppressWarnings("deprecation")
-		int year = date.getYear() + 1900;
 
 		if (f == Format.PLAIN_TEXT) {
-			return authorsStr + ", \"" + title + ",\" " + journal
+			return authorsStr + ", \"" + title + "\", " + (journal != null ? journal : "")
 					+ ", vol. " + volume + ", no. " + number
-					+ ", pp. " + pages + ", " + year
+					+ ", pp. " + pages + ", " + yearStr
 					+ ", doi: " + (doi != null ? doi : "N/A") + ".";
 		} else {
 			// BibTeX
-			String firstAuthorLastName = authors.get(0).split(" ")[0].toLowerCase();
-			String key = firstAuthorLastName + year;
+			String firstAuthorLastName = "unknown";
+			if (authors != null && !authors.isEmpty()) {
+				String[] parts = authors.get(0).split(" ");
+				if (parts.length > 0 && parts[0].length() > 0) firstAuthorLastName = parts[0].toLowerCase();
+			}
+			String key = firstAuthorLastName + keyYear;
 			return "@ARTICLE{" + key + ",\n"
 					+ "  author={" + authorsStr + "},\n"
 					+ "  journal={" + (journal != null ? journal : "") + "},\n"
 					+ "  title={" + title + "},\n"
-					+ "  year={" + year + "},\n"
+					+ "  year={" + yearStr + "},\n"
 					+ "  volume={" + volume + "},\n"
 					+ "  number={" + number + "},\n"
 					+ "  pages={" + pages + "},\n"
