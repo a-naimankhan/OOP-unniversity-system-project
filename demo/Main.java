@@ -2,6 +2,9 @@ package demo;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
 
 import course.Course;
 import course.Period;
@@ -175,15 +178,54 @@ public class Main {
 					+ " (h-index: " + topResearcher.calculateHIndex() + ")");
 		}
 
-		// --- Login Test ---
-		System.out.println("\n=== Login Test ===");
-		System.out.println("Login aidar/student1: " + s1.login("aidar", "student1"));
-		System.out.println("Login aidar/wrong: " + s1.login("aidar", "wrong"));
+		// --- Interactive Login ---
+		System.out.println("\n=== Interactive Login ===");
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		User loggedIn = null;
+		try {
+			while (loggedIn == null) {
+				System.out.print("Username: ");
+				String uname = br.readLine();
+				System.out.print("Password: ");
+				String pwd = br.readLine();
+				User candidate = null;
+				for (User u : Database.users) {
+					if (u.getUsername() != null && u.getUsername().equals(uname)) {
+						candidate = u;
+						break;
+					}
+				}
+				if (candidate != null && candidate.login(uname, pwd)) {
+					loggedIn = candidate;
+				} else {
+					System.out.println("Login failed. Please try again.");
+				}
+			}
+			System.out.println("Logged in as: " + loggedIn.getFullName() + " (" + loggedIn.getClass().getSimpleName() + ")");
+			// Dispatch to demo menus
+			if (loggedIn instanceof Admin) {
+				AdminDemo.run(loggedIn);
+			} else if (loggedIn instanceof Manager) {
+				ManagerDemo.run(loggedIn);
+			} else if (loggedIn instanceof TechSupportSpecialist) {
+				TechSupportDemo.run(loggedIn);
+			} else if (loggedIn instanceof Teacher) {
+				TeacherDemo.run(loggedIn);
+			} else if (loggedIn instanceof GraduateStudent) {
+				GraduateStudentDemo.run(loggedIn);
+			} else if (loggedIn instanceof Student) {
+				StudentDemo.run(loggedIn);
+			} else {
+				System.out.println("No demo available for user type: " + loggedIn.getClass().getSimpleName());
+			}
+		} catch (IOException e) {
+			System.out.println("Login interrupted: " + e.getMessage());
+		}
 
-		// --- Manager View ---
-		System.out.println("\n=== Manager View ===");
-		System.out.println(manager.viewStudentsByName());
-		System.out.println(manager.viewTeachersByName());
+
+
+
+
 
 		System.out.println("\n=== ALL TESTS PASSED ===");
 	}
