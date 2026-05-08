@@ -36,10 +36,8 @@ public class Teacher extends Employee implements Serializable {
 
 	public void sendComplaint(Student student, String text, UrgencyLevel urgency, User dean) {
 		Complaint c = new Complaint(text, this, dean, new java.util.Date().toString(), student, urgency);
-		// Notify the dean via the Observer mechanism
 		dean.update("NEW COMPLAINT [" + urgency + "] from " + this.getFullName()
 				+ " about student " + student.getFullName());
-		// Store in Database as a Request so TechSupport and Admin can see it
 		Request req = new Request("Complaint about " + student.getFullName() + ": " + text,
 				this, new java.util.Date().toString(), urgency);
 		Database.requests.add(req);
@@ -53,7 +51,6 @@ public class Teacher extends Employee implements Serializable {
 		Mark existing = student.getMarks().get(course);
 
 		if (period == AttestationType.FIRST) {
-			// cap at 30 and accumulate — mutate existing mark, do NOT replace it
 			double newFirst = existing.getFirstAttestation() + point;
 			if (newFirst > 30) newFirst = 30;
 			existing.setFirstAttestation(newFirst);
@@ -62,13 +59,11 @@ public class Teacher extends Employee implements Serializable {
 			if (newSecond > 30) newSecond = 30;
 			existing.setSecondAttestation(newSecond);
 		} else {
-			// EXAM — cap at 40
 			double newExam = existing.getExamMark() + point;
 			if (newExam > 40) newExam = 40;
 			existing.setExamMark(newExam);
 		}
 
-		// Record fail if final < 50 and attestations are complete (exam was just set)
 		if (period == AttestationType.EXAM && existing.getFinalAttestation() < 50) {
 			student.recordFail(course);
 		}
@@ -130,7 +125,6 @@ public class Teacher extends Employee implements Serializable {
 	}
 
 	public void setRating(double newRating) {
-		// Maintain running average. Increment ratedCnt after computing new average.
 		this.rating = (this.rating * this.ratedCnt + newRating) / (this.ratedCnt + 1);
 		this.ratedCnt++;
 	}
@@ -145,7 +139,6 @@ public class Teacher extends Employee implements Serializable {
 
 	@Override
 	public int hashCode() {
-		// Use stable identity field: username only
 		return Objects.hash(getUsername());
 	}
 

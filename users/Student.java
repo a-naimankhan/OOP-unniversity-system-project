@@ -162,7 +162,6 @@ public class Student extends User implements Serializable {
 
 	@Override
 	public int hashCode() {
-		// Use stable identity field: id only
 		return Objects.hash(id);
 	}
 

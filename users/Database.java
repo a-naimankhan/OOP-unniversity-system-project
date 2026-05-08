@@ -26,6 +26,8 @@ import research.Researcher;
 import research.ResearchPaper;
 import research.Journal;
 import other.Request;
+import other.RecommendationLetter;
+import other.Startup;
 
 public final class Database implements Serializable {
 
@@ -50,7 +52,6 @@ public final class Database implements Serializable {
         logs.add(entry);
     }
 
-	// private — Singleton; use getInstance()
 	private Database() {}
 
 	private Database(String value) {
@@ -79,6 +80,8 @@ public final class Database implements Serializable {
 	public static Vector<Request> requests = new Vector<Request>();
 	public static Vector<course.Attendance> attendanceRecords = new Vector<course.Attendance>();
 	public static Vector<course.Room> rooms = new Vector<course.Room>();
+	public static Vector<Startup> startups = new Vector<Startup>();
+	public static Vector<RecommendationLetter> recommendationLetters = new Vector<RecommendationLetter>();
 
 	/**
 	 * Collects all researchers from users list
@@ -163,6 +166,26 @@ public final class Database implements Serializable {
 		serializeLogs();
 		serializeAttendance();
 		serializeRooms();
+		serializeStartups();
+		serializeRecommendationLetters();
+		saveCredentials();
+	}
+
+	public static void saveCredentials() {
+		try (java.io.PrintWriter pw = new java.io.PrintWriter(
+				new java.io.OutputStreamWriter(
+						new java.io.FileOutputStream(BASEPATH + "credentials.txt"), java.nio.charset.StandardCharsets.UTF_8))) {
+			pw.println("=== University System — User Credentials ===");
+			pw.println(String.format("%-30s %-20s %-15s %s", "Full Name", "Username", "Password", "Role"));
+			pw.println("-".repeat(85));
+			for (User u : users) {
+				pw.println(String.format("%-30s %-20s %-15s %s",
+						u.getFullName(), u.getUsername(), u.getPassword(),
+						u.getClass().getSimpleName()));
+			}
+		} catch (Exception e) {
+			System.out.println("Could not save credentials.txt: " + e.getMessage());
+		}
 	}
 
 	/**
@@ -199,9 +222,88 @@ public final class Database implements Serializable {
 			if (att != null) attendanceRecords = att;
 			Vector<course.Room> rm = deserializeRooms();
 			if (rm != null) rooms = rm;
+			Vector<Startup> st = deserializeStartups();
+			if (st != null) startups = st;
+			Vector<RecommendationLetter> rl = deserializeRecommendationLetters();
+			if (rl != null) recommendationLetters = rl;
 		} catch (ClassNotFoundException ex) {
 			System.err.println("Failed to load database: " + ex.getMessage());
 		}
+	}
+
+	// Startups
+	public static void serializeStartups() {
+		try (FileOutputStream fos = new FileOutputStream(BASEPATH + "startups.txt");
+			 ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+			oos.writeObject(startups);
+		} catch (IOException e) { e.printStackTrace(); }
+	}
+
+	public static Vector<Startup> deserializeStartups() throws ClassNotFoundException {
+		try (FileInputStream fis = new FileInputStream(BASEPATH + "startups.txt");
+			 ObjectInputStream ois = new ObjectInputStream(fis)) {
+			@SuppressWarnings("unchecked")
+			Vector<Startup> s = (Vector<Startup>) ois.readObject();
+			return s;
+		} catch (FileNotFoundException e) {
+			return null;
+		} catch (IOException e) { e.printStackTrace(); }
+		return null;
+	}
+
+	// RecommendationLetters
+	public static void serializeRecommendationLetters() {
+		try (FileOutputStream fos = new FileOutputStream(BASEPATH + "recletters.txt");
+			 ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+			oos.writeObject(recommendationLetters);
+		} catch (IOException e) { e.printStackTrace(); }
+	}
+
+	public static Vector<RecommendationLetter> deserializeRecommendationLetters() throws ClassNotFoundException {
+		try (FileInputStream fis = new FileInputStream(BASEPATH + "recletters.txt");
+			 ObjectInputStream ois = new ObjectInputStream(fis)) {
+			@SuppressWarnings("unchecked")
+			Vector<RecommendationLetter> r = (Vector<RecommendationLetter>) ois.readObject();
+			return r;
+		} catch (FileNotFoundException e) {
+			return null;
+		} catch (IOException e) { e.printStackTrace(); }
+		return null;
+	}
+
+	// ── RegEx search ──────────────────────────────────────────────────────────
+
+	public static List<User> searchUsers(String regex) {
+		List<User> result = new ArrayList<>();
+		for (User u : users) {
+			if (u.getFullName() != null && u.getFullName().matches("(?i).*" + regex + ".*"))
+				result.add(u);
+			else if (u.getUsername() != null && u.getUsername().matches("(?i).*" + regex + ".*"))
+				result.add(u);
+		}
+		return result;
+	}
+
+	public static List<Course> searchCourses(String regex) {
+		List<Course> result = new ArrayList<>();
+		for (Course c : courses) {
+			if (c.getCourseName() != null && c.getCourseName().matches("(?i).*" + regex + ".*"))
+				result.add(c);
+			else if (c.getCourseCode() != null && c.getCourseCode().matches("(?i).*" + regex + ".*"))
+				result.add(c);
+		}
+		return result;
+	}
+
+	public static List<ResearchPaper> searchResearchPapers(String regex) {
+		List<ResearchPaper> result = new ArrayList<>();
+		for (Researcher r : getAllResearchers()) {
+			for (ResearchPaper p : r.getResearchPapers()) {
+				if (p.getTitle() != null && p.getTitle().matches("(?i).*" + regex + ".*"))
+					if (!result.contains(p)) result.add(p);
+			}
+		}
+		return result;
 	}
 
 	// Journals

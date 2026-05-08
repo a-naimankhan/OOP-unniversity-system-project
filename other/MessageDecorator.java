@@ -2,7 +2,6 @@ package other;
 
 import users.User;
 
-// abstract Decorator — wraps IMessage and delegates all calls to the wrapped instance
 public abstract class MessageDecorator implements IMessage {
 
     protected IMessage wrapped;

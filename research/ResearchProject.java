@@ -43,7 +43,6 @@ public class ResearchProject implements Serializable {
 		publishedPapers.add(paper);
 	}
 
-	// geetters and setters
 	public String getTopic() { return topic; }
 	public void setTopic(String topic) { this.topic = topic; }
 

@@ -3,7 +3,6 @@ package other;
 import java.io.Serializable;
 import users.User;
 
-// base component of Decorator pattern — also used standalone for regular messages
 public class Message implements Serializable, IMessage {
     private static final long serialVersionUID = 1L;
     
@@ -43,7 +42,6 @@ public class Message implements Serializable, IMessage {
         return date;
     }
 
-    // returns the full formatted string representation of the message
     @Override
     public String getFormattedContent() {
         return toString();

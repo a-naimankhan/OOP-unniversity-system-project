@@ -6,11 +6,13 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Arrays;
 
+import other.RecommendationLetter;
+import other.Startup;
+import research.PaperByDate;
 import research.ResearchPaper;
 import research.ResearchProject;
-import research.PaperByDate;
+import users.Database;
 import users.GraduateStudent;
 import users.User;
 import exceptions.NotResearcherException;
@@ -27,13 +29,22 @@ public class GraduateStudentDemo {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		try {
 			menu: while (true) {
-				System.out.println("\nGraduateStudent Menu:\n 1) Add research paper\n 2) Print papers\n 3) Join research project\n 4) View h-index\n 5) Logout");
+				System.out.println("\nGraduateStudent Menu:\n"
+						+ " 1) Add research paper\n"
+						+ " 2) Print papers\n"
+						+ " 3) Join research project\n"
+						+ " 4) View h-index\n"
+						+ " 5) Create startup\n"
+						+ " 6) View recommendation letters\n"
+						+ " 7) Logout");
 				System.out.print("Choice: ");
 				String line = br.readLine();
 				int choice;
-				try { choice = Integer.parseInt(line); } catch (NumberFormatException e) { System.out.println("Invalid input"); continue; }
+				try { choice = Integer.parseInt(line.trim()); }
+				catch (NumberFormatException e) { System.out.println("Invalid input"); continue; }
+
 				switch (choice) {
-				case 1:
+				case 1: {
 					System.out.print("Title: ");
 					String title = br.readLine();
 					System.out.print("Authors (comma-separated): ");
@@ -57,17 +68,19 @@ public class GraduateStudentDemo {
 					System.out.print("Number (int): ");
 					int number = Integer.parseInt(br.readLine());
 					try {
-						ResearchPaper p = new ResearchPaper(title, authors, journal, pages, date, doi, citations, volume, number);
+						ResearchPaper p = new ResearchPaper(title, authors, journal,
+								pages, date, doi, citations, volume, number);
 						grad.addResearchPaper(p);
 						System.out.println("Paper added.");
 					} catch (IllegalArgumentException ex) {
-						System.out.println("Failed to add paper: " + ex.getMessage());
+						System.out.println("Failed: " + ex.getMessage());
 					}
 					break;
+				}
 				case 2:
 					grad.printPapers(new PaperByDate());
 					break;
-				case 3:
+				case 3: {
 					System.out.print("Project topic: ");
 					String topic = br.readLine();
 					ResearchProject proj = new ResearchProject(topic);
@@ -76,13 +89,37 @@ public class GraduateStudentDemo {
 						grad.getResearchProjects().add(proj);
 						System.out.println("Joined project: " + topic);
 					} catch (NotResearcherException | LowHIndexException ex) {
-						System.out.println("Cannot join project: " + ex.getMessage());
+						System.out.println("Cannot join: " + ex.getMessage());
 					}
 					break;
+				}
 				case 4:
 					System.out.println("h-index: " + grad.calculateHIndex());
 					break;
-				case 5:
+				case 5: {
+					System.out.print("Startup name: ");
+					String sName = br.readLine();
+					System.out.print("Description: ");
+					String sDesc = br.readLine();
+					Startup startup = new Startup(sName, grad, sDesc);
+					Database.startups.add(startup);
+					Database.log("Startup created by " + grad.getFullName() + ": " + sName);
+					System.out.println("Startup created:\n" + startup);
+					break;
+				}
+				case 6: {
+					boolean found = false;
+					for (RecommendationLetter letter : Database.recommendationLetters) {
+						if (letter.getStudent() != null
+								&& letter.getStudent().getFullName().equals(grad.getFullName())) {
+							System.out.println(letter);
+							found = true;
+						}
+					}
+					if (!found) System.out.println("No recommendation letters found.");
+					break;
+				}
+				case 7:
 					System.out.println("Logging out...");
 					break menu;
 				default:
@@ -90,7 +127,7 @@ public class GraduateStudentDemo {
 				}
 			}
 		} catch (IOException ex) {
-			System.out.println("I/O error in GraduateStudentDemo: " + ex.getMessage());
+			System.out.println("I/O error: " + ex.getMessage());
 		}
 	}
 }

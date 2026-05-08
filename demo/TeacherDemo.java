@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 
 import course.Course;
 import mark.AttestationType;
+import other.RecommendationLetter;
 import users.Database;
 import users.Student;
 import users.Teacher;
@@ -16,25 +17,16 @@ public class TeacherDemo {
 	static BufferedReader br = null;
 
 	private static void putMark() throws IOException {
-		double point;
-		AttestationType period = null;
 		System.out.println("Enter course name: ");
 		String courseName = br.readLine();
-
 		System.out.println("Enter student name: ");
 		String studentName = br.readLine();
-
-		System.out.println("Choose Attestation type: \n 1) First \n 2) Second \n 3) Exam");
+		System.out.println("Attestation type: 1) First  2) Second  3) Exam");
 		int num = Integer.parseInt(br.readLine());
-		if (num == 1)
-			period = AttestationType.FIRST;
-		else if (num == 2)
-			period = AttestationType.SECOND;
-		else
-			period = AttestationType.EXAM;
-
-		System.out.println("Enter student point: ");
-		point = Integer.parseInt(br.readLine());
+		AttestationType period = (num == 1) ? AttestationType.FIRST
+				: (num == 2) ? AttestationType.SECOND : AttestationType.EXAM;
+		System.out.println("Enter point: ");
+		double point = Double.parseDouble(br.readLine());
 
 		for (Course c : Database.courses) {
 			if (c.getCourseName().equals(courseName)) {
@@ -42,18 +34,47 @@ public class TeacherDemo {
 					if (s.getFullName().equals(studentName)) {
 						if (teacher.putMark(c, s, point, period))
 							System.out.println("Mark added successfully!");
+						else
+							System.out.println("Could not add mark.");
 					}
 				}
 			}
 		}
 	}
 
-	private static void viewCourses() {
-		System.out.println(teacher.viewCourses());
+	private static void generateReport() throws IOException {
+		System.out.println("Enter course name for report: ");
+		String courseName = br.readLine();
+		for (Course c : Database.courses) {
+			if (c.getCourseName().equals(courseName)) {
+				System.out.println(teacher.generateReport(c));
+				return;
+			}
+		}
+		System.out.println("Course not found.");
 	}
 
-	private static void viewStudents() {
-		System.out.println(teacher.viewStudents());
+	private static void writeRecommendationLetter() throws IOException {
+		System.out.println("Enter student name: ");
+		String studentName = br.readLine();
+		Student target = null;
+		for (Student s : Database.students) {
+			if (s.getFullName().equals(studentName)) {
+				target = s;
+				break;
+			}
+		}
+		if (target == null) {
+			System.out.println("Student not found.");
+			return;
+		}
+		System.out.println("Enter letter content: ");
+		String content = br.readLine();
+		RecommendationLetter letter = new RecommendationLetter(target, teacher, content);
+		Database.recommendationLetters.add(letter);
+		Database.log("Recommendation letter written by " + teacher.getFullName()
+				+ " for " + target.getFullName());
+		System.out.println("Recommendation letter saved.");
 	}
 
 	private static void exit() {
@@ -65,40 +86,60 @@ public class TeacherDemo {
 		teacher = (Teacher) user;
 		br = new BufferedReader(new InputStreamReader(System.in));
 		try {
-			menu:
-			while (true) {
-				System.out.println("What do you want to do?\n 1) Put Mark \n 2) View courses \n 3) View students \n 4) Logout");
+			menu: while (true) {
+				System.out.println("What do you want to do?\n"
+						+ " 1) Put mark\n 2) View courses\n 3) View students\n"
+						+ " 4) Generate course report\n 5) Write recommendation letter\n"
+						+ " 6) Logout");
 				int choice = Integer.parseInt(br.readLine());
-				if (choice == 1) {
-					putMark:
+				switch (choice) {
+				case 1:
 					while (true) {
 						putMark();
-						System.out.println("\n 1) Put mark to another student \n 2) Return back \n 3) Exit");
-						choice = Integer.parseInt(br.readLine());
-						if (choice == 1) continue putMark;
-						if (choice == 2) continue menu;
-						if (choice == 3) { exit(); break menu; }
-						break;
+						System.out.println(" 1) Again  2) Back  3) Exit");
+						int c = Integer.parseInt(br.readLine());
+						if (c == 1) continue;
+						if (c == 2) break;
+						exit(); break menu;
 					}
-				} else if (choice == 2) {
-					viewCourses();
-					System.out.println("\n 1) Return back \n 2) Exit");
-					choice = Integer.parseInt(br.readLine());
-					if (choice == 1) continue menu;
-					if (choice == 2) { exit(); break menu; }
-				} else if (choice == 3) {
-					viewStudents();
-					System.out.println("\n 1) Return back \n 2) Exit");
-					choice = Integer.parseInt(br.readLine());
-					if (choice == 1) continue menu;
-					if (choice == 2) { exit(); break menu; }
-				} else {
+					break;
+				case 2:
+					System.out.println(teacher.viewCourses());
+					System.out.println(" 1) Back  2) Exit");
+					if (Integer.parseInt(br.readLine()) != 1) { exit(); break menu; }
+					break;
+				case 3:
+					System.out.println(teacher.viewStudents());
+					System.out.println(" 1) Back  2) Exit");
+					if (Integer.parseInt(br.readLine()) != 1) { exit(); break menu; }
+					break;
+				case 4:
+					while (true) {
+						generateReport();
+						System.out.println(" 1) Again  2) Back  3) Exit");
+						int c = Integer.parseInt(br.readLine());
+						if (c == 1) continue;
+						if (c == 2) break;
+						exit(); break menu;
+					}
+					break;
+				case 5:
+					while (true) {
+						writeRecommendationLetter();
+						System.out.println(" 1) Write another  2) Back  3) Exit");
+						int c = Integer.parseInt(br.readLine());
+						if (c == 1) continue;
+						if (c == 2) break;
+						exit(); break menu;
+					}
+					break;
+				default:
 					exit();
 					break menu;
 				}
 			}
 		} catch (Exception e) {
-			System.out.println("Something bad happened... \n Saving resources...");
+			System.out.println("Error: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}

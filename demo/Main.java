@@ -14,6 +14,8 @@ import exceptions.LowHIndexException;
 import exceptions.MaxFailException;
 import exceptions.NotResearcherException;
 import mark.AttestationType;
+import other.Language;
+import other.LanguageManager;
 import research.*;
 import users.*;
 import demo.TechSupportDemo;
@@ -21,7 +23,7 @@ import demo.GraduateStudentDemo;
 import demo.ResearcherDemo;
 
 public class Main {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		System.out.println("=== University System Test ===\n");
 
 		// --- Create users ---
@@ -54,6 +56,8 @@ public class Main {
 		System.out.println("Users created: " + Database.users.size());
 		System.out.println("Students: " + Database.students.size());
 		System.out.println("Teachers: " + Database.teachers.size());
+		Database.saveCredentials();
+		System.out.println("Credentials saved to data/credentials.txt");
 
 		// --- Create courses ---
 		Course oop = new Course("OOP", Period.SPRING, "CSCI2106", 6, false, 30, null, FacultyType.FIT);
@@ -186,10 +190,26 @@ public class Main {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		User loggedIn = null;
 		try {
+			// Language selection
+			System.out.println(LanguageManager.getTranslation("select_language", Language.EN));
+			System.out.print("Choice: ");
+			Language selectedLang = Language.EN;
+			try {
+				String langLine = br.readLine();
+				if (langLine != null) {
+					int langChoice = Integer.parseInt(langLine.trim());
+					if (langChoice == 2) selectedLang = Language.RU;
+					else if (langChoice == 3) selectedLang = Language.KZ;
+				}
+			} catch (NumberFormatException ignored) {}
+			final Language lang = selectedLang;
+
+			System.out.println(LanguageManager.getTranslation("welcome", lang));
+
 			while (loggedIn == null) {
-				System.out.print("Username: ");
+				System.out.print(LanguageManager.getTranslation("enter_username", lang));
 				String uname = br.readLine();
-				System.out.print("Password: ");
+				System.out.print(LanguageManager.getTranslation("enter_password", lang));
 				String pwd = br.readLine();
 				User candidate = null;
 				for (User u : Database.users) {
@@ -200,10 +220,12 @@ public class Main {
 				}
 				if (candidate != null && candidate.login(uname, pwd)) {
 					loggedIn = candidate;
+					loggedIn.setLanguage(lang);
 				} else {
-					System.out.println("Login failed. Please try again.");
+					System.out.println(LanguageManager.getTranslation("login_fail", lang));
 				}
 			}
+			System.out.println(LanguageManager.getTranslation("login_success", lang));
 			System.out.println("Logged in as: " + loggedIn.getFullName() + " (" + loggedIn.getClass().getSimpleName() + ")");
 			// Dispatch to demo menus
 			if (loggedIn instanceof Admin) {
