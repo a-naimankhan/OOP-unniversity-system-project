@@ -77,6 +77,8 @@ public final class Database implements Serializable {
 	public static Vector<String> comments = new Vector<String>();
 	public static Vector<Journal> journals = new Vector<Journal>();
 	public static Vector<Request> requests = new Vector<Request>();
+	public static Vector<course.Attendance> attendanceRecords = new Vector<course.Attendance>();
+	public static Vector<course.Room> rooms = new Vector<course.Room>();
 
 	/**
 	 * Collects all researchers from users list
@@ -159,6 +161,8 @@ public final class Database implements Serializable {
 		serializeJournals();
 		serializeRequests();
 		serializeLogs();
+		serializeAttendance();
+		serializeRooms();
 	}
 
 	/**
@@ -191,6 +195,10 @@ public final class Database implements Serializable {
 			if (r != null) requests = r;
 			Vector<String> l = deserializeLogs();
 			if (l != null) logs = l;
+			Vector<course.Attendance> att = deserializeAttendance();
+			if (att != null) attendanceRecords = att;
+			Vector<course.Room> rm = deserializeRooms();
+			if (rm != null) rooms = rm;
 		} catch (ClassNotFoundException ex) {
 			System.err.println("Failed to load database: " + ex.getMessage());
 		}
@@ -214,6 +222,58 @@ public final class Database implements Serializable {
 			@SuppressWarnings("unchecked")
 			Vector<Journal> j = (Vector<Journal>)ois.readObject();
 			return j;
+		} catch (FileNotFoundException e) {
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	// Attendance
+	public static void serializeAttendance() {
+		try (FileOutputStream fis = new FileOutputStream(BASEPATH + "attendance.txt")){
+			ObjectOutputStream oos = new ObjectOutputStream(fis);
+			oos.writeObject(attendanceRecords);
+			oos.flush();
+			oos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static Vector<course.Attendance> deserializeAttendance() throws ClassNotFoundException {
+		try (FileInputStream fs = new FileInputStream(BASEPATH + "attendance.txt")){
+			ObjectInputStream ois = new ObjectInputStream(fs);
+			@SuppressWarnings("unchecked")
+			Vector<course.Attendance> a = (Vector<course.Attendance>)ois.readObject();
+			return a;
+		} catch (FileNotFoundException e) {
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	// Rooms
+	public static void serializeRooms() {
+		try (FileOutputStream fis = new FileOutputStream(BASEPATH + "rooms.txt")){
+			ObjectOutputStream oos = new ObjectOutputStream(fis);
+			oos.writeObject(rooms);
+			oos.flush();
+			oos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static Vector<course.Room> deserializeRooms() throws ClassNotFoundException {
+		try (FileInputStream fs = new FileInputStream(BASEPATH + "rooms.txt")){
+			ObjectInputStream ois = new ObjectInputStream(fs);
+			@SuppressWarnings("unchecked")
+			Vector<course.Room> r = (Vector<course.Room>)ois.readObject();
+			return r;
 		} catch (FileNotFoundException e) {
 			return null;
 		} catch (IOException e) {

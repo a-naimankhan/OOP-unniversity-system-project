@@ -69,8 +69,8 @@
 
 ### 🔧 Осталось у derdiedasx
 
-- [ ] `Request` не имеет поля `signedBy` — по ТЗ запросы должны быть подписаны деканом/ректором (нужно добавить `User signedBy` в Request)
-- [ ] `Database.requests` существует, но `TechSupportSpecialist` не добавляет новые запросы сам — нужен метод `createRequest()` либо у User, либо у Student/Employee
+- [x] `Request` не имеет поля `signedBy` — по ТЗ запросы должны быть подписаны деканом/ректором (нужно добавить `User signedBy` в Request)
+- [x] `Database.requests` существует, но `TechSupportSpecialist` не добавляет новые запросы сам — нужен метод `createRequest()` либо у User, либо у Student/Employee
 
 ---
 
@@ -173,18 +173,18 @@ if (total >= 95 ...
 - [x] ≥ 4 паттерна (Observer, Singleton, Factory Method, Decorator)
 - [x] Serialization (Database)
 - [x] Comparable + Comparators
-- [ ] `CourseType` enum (MAJOR, MINOR, FREE_ELECTIVE)
+- [x] `CourseType` enum (MAJOR, MINOR, FREE_ELECTIVE)
 - [x] `StudentOrganization`
-- [ ] Teacher implements Researcher (для профессоров)
-- [ ] Исправить баг в `Mark.convertToLetterMark()`
+- [x] Teacher implements Researcher (для профессоров)
+- [x] Исправить баг в `Mark.convertToLetterMark()`
 - [x] `Transcript` класс
 
 ---
 
 ## Бонусы (extra points)
 
-- [ ] Расписание (Schedule): классы `Room` (type, capacity, number), `Schedule` (lessons by day/time)
-- [ ] Посещаемость (Attendance)
+- [x] Расписание (Schedule): классы `Room` (type, capacity, number), `Schedule` (lessons by day/time)
+- [x] Посещаемость (Attendance)
 - [ ] Расширенный поиск (RegEx)
 - [ ] Стартапы, рекомендательные письма
 

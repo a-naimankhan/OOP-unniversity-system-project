@@ -108,6 +108,14 @@ public class Manager extends Employee implements Serializable {
 		}
 		return result;
 	}
+
+	/**
+	 * Signs a request by this manager (e.g., Dean/OR).
+	 */
+	public void signRequest(Request r) {
+		r.signBy(this);
+		Database.log("REQUEST signed by " + getUsername() + ": " + r.getDescription());
+	}
 	
 	public String viewStudentsByName() {
 		String info = "";
