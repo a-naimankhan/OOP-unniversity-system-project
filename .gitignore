@@ -18,11 +18,19 @@
 .DS_Store
 Thumbs.db
 
-# Serialized data
+# Serialized data (runtime)
 *.ser
+data/
 
 # Build output
 bin/
 out/
 build/
 target/
+
+# Generated files
+sources.txt
+credentials.txt
+
+# UML diagrams (StarUML)
+*.mdj
