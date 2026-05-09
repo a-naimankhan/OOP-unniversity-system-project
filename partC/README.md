@@ -26,6 +26,9 @@ chcp 65001
 java "-Dfile.encoding=UTF-8" "-Dstdout.encoding=UTF-8" "-Dstderr.encoding=UTF-8" -cp out demo.Main
 ```
 
+```
+cd "d:\8.Java\OOP-unniversity-system-project"; chcp 65001; java "-Dfile.encoding=UTF-8" "-Dstdout.encoding=UTF-8" "-Dstderr.encoding=UTF-8" -cp out demo.Main 
+```
 > `chcp 65001` — включает UTF-8 в терминале для корректного отображения кириллицы.
 
 ### Логины для входа
