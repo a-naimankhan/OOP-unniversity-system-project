@@ -118,9 +118,9 @@ public class StudentDemo {
 		return true; // 1=again, 2=back — both handled by caller
 	}
 
-	public static void run(User user) {
+	public static void run(User user, BufferedReader brIn) {
 		student = (Student) user;
-		br = new BufferedReader(new InputStreamReader(System.in));
+		br = brIn;
 		try {
 			menu: while (true) {
 				System.out.println(t("student_menu"));
@@ -159,18 +159,28 @@ public class StudentDemo {
 					}
 					break;
 				case 4: // View courses
-					System.out.println(student.viewCourse());
+					if (student.viewCourse().isEmpty()) {
+						System.out.println("No courses registered.");
+					} else {
+						System.out.println("Your registered courses:");
+						for (Course c : student.viewCourse())
+							System.out.printf("  - %s [%s, %d credits]%n", c.getCourseName(), c.getSemester(), c.getCredit());
+					}
 					System.out.println(" 1) " + t("menu_back") + "  2) " + t("menu_exit"));
 					if (Integer.parseInt(br.readLine()) != 1) { exit(); break menu; }
 					break;
 				case 5: // View teacher info
 					while (true) {
-						System.out.print("Enter teacher's name: ");
-						String name = br.readLine();
-						for (Teacher tch : Database.teachers) {
-							if (tch.getFullName().equals(name))
-								System.out.println(student.viewTeacher(tch));
-						}
+						java.util.List<Teacher> tlist = new java.util.ArrayList<>(Database.teachers);
+						if (tlist.isEmpty()) { System.out.println(t("teacher_not_found")); break; }
+						System.out.println("Teachers:");
+						for (int i = 0; i < tlist.size(); i++)
+							System.out.printf(" %d) %s%n", i + 1, tlist.get(i).getFullName());
+						System.out.print("Choice (0 to cancel): ");
+						int ti5;
+						try { ti5 = Integer.parseInt(br.readLine().trim()); } catch (NumberFormatException e) { ti5 = 0; }
+						if (ti5 >= 1 && ti5 <= tlist.size())
+							System.out.println(student.viewTeacher(tlist.get(ti5 - 1)));
 						System.out.println(t("prompt_continue"));
 						int c5 = Integer.parseInt(br.readLine());
 						if (c5 == 1) continue;
@@ -197,7 +207,13 @@ public class StudentDemo {
 									System.out.println(student.viewMarks(myCourses.get(ci - 1)));
 							}
 						} else if (sub == 2) {
-							System.out.println(student.getMarks());
+							if (student.getMarks().isEmpty()) {
+								System.out.println("No marks yet.");
+							} else {
+								System.out.println("All marks:");
+								for (java.util.Map.Entry<Course, mark.Mark> e : student.getMarks().entrySet())
+									System.out.printf("  %-20s %s%n", e.getKey().getCourseName(), e.getValue());
+							}
 						} else {
 							break;
 						}

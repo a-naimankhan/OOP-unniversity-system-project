@@ -2,14 +2,16 @@ package demo;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import other.LanguageManager;
 import other.RecommendationLetter;
 import other.Startup;
+import research.PaperByCitations;
 import research.PaperByDate;
+import research.PaperByPages;
 import research.ResearchPaper;
 import research.ResearchProject;
 import users.Database;
@@ -20,23 +22,17 @@ import exceptions.LowHIndexException;
 
 public class GraduateStudentDemo {
 
-	public static void run(User user) {
+	public static void run(User user, BufferedReader brIn) {
 		if (!(user instanceof GraduateStudent)) {
 			System.out.println("This demo is only for GraduateStudent users.");
 			return;
 		}
 		GraduateStudent grad = (GraduateStudent) user;
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		BufferedReader br = brIn;
+
 		try {
 			menu: while (true) {
-				System.out.println("\nGraduateStudent Menu:\n"
-						+ " 1) Add research paper\n"
-						+ " 2) Print papers\n"
-						+ " 3) Join research project\n"
-						+ " 4) View h-index\n"
-						+ " 5) Create startup\n"
-						+ " 6) View recommendation letters\n"
-						+ " 7) Logout");
+				System.out.println(t("grad_menu", grad));
 				System.out.print("Choice: ");
 				String line = br.readLine();
 				int choice;
@@ -45,51 +41,46 @@ public class GraduateStudentDemo {
 
 				switch (choice) {
 				case 1: {
-					System.out.print("Title: ");
-					String title = br.readLine();
-					System.out.print("Authors (comma-separated): ");
-					String authorsLine = br.readLine();
+					System.out.print(t("title_prompt", grad));    String title = br.readLine();
+					System.out.print(t("authors_prompt", grad));  String authLine = br.readLine();
 					List<String> authors = new ArrayList<>();
-					for (String a : authorsLine.split(",")) authors.add(a.trim());
-					System.out.print("Journal: ");
-					String journal = br.readLine();
-					System.out.print("Pages (int): ");
-					int pages = Integer.parseInt(br.readLine());
-					System.out.print("Year (e.g. 2024): ");
-					int year = Integer.parseInt(br.readLine());
+					for (String a : authLine.split(",")) authors.add(a.trim());
+					System.out.print(t("journal_prompt", grad));  String journal = br.readLine();
+					System.out.print(t("pages_prompt", grad));    int pages = Integer.parseInt(br.readLine().trim());
+					System.out.print(t("year_prompt", grad));     int year = Integer.parseInt(br.readLine().trim());
 					Date date = new Date(year - 1900, 0, 1);
-					System.out.print("DOI (or leave blank): ");
-					String doi = br.readLine();
+					System.out.print(t("doi_prompt", grad));      String doi = br.readLine();
 					if (doi != null && doi.trim().isEmpty()) doi = null;
-					System.out.print("Citations (int): ");
-					int citations = Integer.parseInt(br.readLine());
-					System.out.print("Volume (int): ");
-					int volume = Integer.parseInt(br.readLine());
-					System.out.print("Number (int): ");
-					int number = Integer.parseInt(br.readLine());
+					System.out.print(t("citations_prompt", grad)); int citations = Integer.parseInt(br.readLine().trim());
+					System.out.print(t("volume_prompt", grad));   int volume = Integer.parseInt(br.readLine().trim());
+					System.out.print(t("number_prompt", grad));   int number = Integer.parseInt(br.readLine().trim());
 					try {
-						ResearchPaper p = new ResearchPaper(title, authors, journal,
-								pages, date, doi, citations, volume, number);
-						grad.addResearchPaper(p);
-						System.out.println("Paper added.");
+						grad.addResearchPaper(new ResearchPaper(title, authors, journal, pages, date, doi, citations, volume, number));
+						System.out.println(t("paper_added", grad));
 					} catch (IllegalArgumentException ex) {
-						System.out.println("Failed: " + ex.getMessage());
+						System.out.println(t("paper_fail", grad) + ex.getMessage());
 					}
 					break;
 				}
-				case 2:
-					grad.printPapers(new PaperByDate());
+				case 2: {
+					System.out.println(t("sort_by", grad));
+					int s;
+					try { s = Integer.parseInt(br.readLine().trim()); } catch (NumberFormatException e) { s = 1; }
+					if (s == 2) grad.printPapers(new PaperByCitations());
+					else if (s == 3) grad.printPapers(new PaperByPages());
+					else grad.printPapers(new PaperByDate());
 					break;
+				}
 				case 3: {
-					System.out.print("Project topic: ");
+					System.out.print(t("project_topic", grad));
 					String topic = br.readLine();
 					ResearchProject proj = new ResearchProject(topic);
 					try {
 						proj.addParticipant(grad);
 						grad.getResearchProjects().add(proj);
-						System.out.println("Joined project: " + topic);
+						System.out.println(t("joined_project", grad) + topic);
 					} catch (NotResearcherException | LowHIndexException ex) {
-						System.out.println("Cannot join: " + ex.getMessage());
+						System.out.println(t("cannot_join", grad) + ex.getMessage());
 					}
 					break;
 				}
@@ -97,14 +88,13 @@ public class GraduateStudentDemo {
 					System.out.println("h-index: " + grad.calculateHIndex());
 					break;
 				case 5: {
-					System.out.print("Startup name: ");
-					String sName = br.readLine();
-					System.out.print("Description: ");
-					String sDesc = br.readLine();
+					System.out.print(t("startup_name", grad));  String sName = br.readLine();
+					System.out.print(t("startup_desc", grad));  String sDesc = br.readLine();
 					Startup startup = new Startup(sName, grad, sDesc);
 					Database.startups.add(startup);
 					Database.log("Startup created by " + grad.getFullName() + ": " + sName);
-					System.out.println("Startup created:\n" + startup);
+					System.out.println(t("startup_created", grad));
+					System.out.println(startup);
 					break;
 				}
 				case 6: {
@@ -116,11 +106,12 @@ public class GraduateStudentDemo {
 							found = true;
 						}
 					}
-					if (!found) System.out.println("No recommendation letters found.");
+					if (!found) System.out.println(t("no_rec_letters", grad));
 					break;
 				}
 				case 7:
-					System.out.println("Logging out...");
+					Database.save();
+					System.out.println(t("menu_logout", grad));
 					break menu;
 				default:
 					System.out.println("Unknown choice");
@@ -129,5 +120,9 @@ public class GraduateStudentDemo {
 		} catch (IOException ex) {
 			System.out.println("I/O error: " + ex.getMessage());
 		}
+	}
+
+	private static String t(String key, GraduateStudent grad) {
+		return LanguageManager.getTranslation(key, grad.getLanguage());
 	}
 }

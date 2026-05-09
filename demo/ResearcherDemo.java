@@ -20,13 +20,13 @@ import exceptions.NotResearcherException;
 
 public class ResearcherDemo {
 
-	public static void run(User user) {
+	public static void run(User user, BufferedReader brIn) {
 		if (!(user instanceof Researcher)) {
 			System.out.println("This demo is only for Researcher users.");
 			return;
 		}
 		Researcher r = (Researcher) user;
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		BufferedReader br = brIn;
 		try {
 			menu: while (true) {
 				System.out.println("\nResearcher Menu:\n 1) Add research paper\n 2) Print papers (sort)\n 3) Compute h-index\n 4) Join research project\n 5) Generate citation\n 6) Logout");

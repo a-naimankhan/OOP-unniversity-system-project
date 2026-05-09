@@ -229,17 +229,17 @@ public class Main {
 			System.out.println("Logged in as: " + loggedIn.getFullName() + " (" + loggedIn.getClass().getSimpleName() + ")");
 			// Dispatch to demo menus
 			if (loggedIn instanceof Admin) {
-				AdminDemo.run(loggedIn);
+				AdminDemo.run(loggedIn, br);
 			} else if (loggedIn instanceof Manager) {
-				ManagerDemo.run(loggedIn);
+				ManagerDemo.run(loggedIn, br);
 			} else if (loggedIn instanceof TechSupportSpecialist) {
-				TechSupportDemo.run(loggedIn);
+				TechSupportDemo.run(loggedIn, br);
 			} else if (loggedIn instanceof Teacher) {
-				TeacherDemo.run(loggedIn);
+				TeacherDemo.run(loggedIn, br);
 			} else if (loggedIn instanceof GraduateStudent) {
-				GraduateStudentDemo.run(loggedIn);
+				GraduateStudentDemo.run(loggedIn, br);
 			} else if (loggedIn instanceof Student) {
-				StudentDemo.run(loggedIn);
+				StudentDemo.run(loggedIn, br);
 			} else {
 				System.out.println("No demo available for user type: " + loggedIn.getClass().getSimpleName());
 			}

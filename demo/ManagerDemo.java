@@ -1,14 +1,17 @@
 package demo;
 
 import java.io.BufferedReader;
-
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import course.Course;
 import course.Period;
+import other.LanguageManager;
 import other.Message;
 import other.News;
+import other.NewsTopic;
 import users.Database;
 import users.Employee;
 import users.FacultyType;
@@ -16,377 +19,245 @@ import users.Manager;
 import users.Teacher;
 import users.User;
 
-import other.NewsTopic;
-import java.util.Date;
-
 public class ManagerDemo {
 	static Manager manager = null;
 	static BufferedReader br = null;
-	
-	private static void addCourse() throws IOException {
-		String courseName;
-		Period period;
-		String courseCode;
-		int credit;
-		boolean isElective;
-		int studentLimit;
-		Course prereq = null;
-		FacultyType type = null;
-		
-		System.out.println("Enter course name: ");
-		courseName = br.readLine();
 
-		System.out.println("Chooose semester: \n 1) Fall \n 2) Spring \n 3) Summer");
-		int num = Integer.parseInt(br.readLine());
-		if (num == 1) 
-			period = Period.FALL;
-		else if (num == 2) 
-			period = Period.SPRING;
-		else
-			period = Period.SUMMER;
-		
-		System.out.println("Enter course code: ");
-		courseCode = br.readLine();
-		
-		System.out.println("Enter number of credits: ");
-		credit = Integer.parseInt(br.readLine());
-		
-		System.out.println("Choose is course elective: \n 1) No \n 2) Yes");
-		int chose = Integer.parseInt(br.readLine());
-		if (chose == 1)
-			isElective = false;
-		else 
-			isElective = true;
-		
-		System.out.println("Enter number of students: ");
-		studentLimit = Integer.parseInt(br.readLine());
-		
-		System.out.println("Enter name of course prerequisites: ");
+	private static String t(String key) {
+		return LanguageManager.getTranslation(key, manager.getLanguage());
+	}
+
+	private static void addCourse() throws IOException {
+		System.out.print(t("enter_cname"));
+		String courseName = br.readLine();
+
+		System.out.println(t("enter_semester"));
+		int num = Integer.parseInt(br.readLine().trim());
+		Period period = (num == 1) ? Period.FALL : (num == 2) ? Period.SPRING : Period.SUMMER;
+
+		System.out.print(t("enter_code"));
+		String courseCode = br.readLine();
+
+		System.out.print(t("enter_credits"));
+		int credit = Integer.parseInt(br.readLine().trim());
+
+		System.out.println(t("is_elective"));
+		boolean isElective = Integer.parseInt(br.readLine().trim()) == 2;
+
+		System.out.print(t("enter_limit"));
+		int studentLimit = Integer.parseInt(br.readLine().trim());
+
+		System.out.print(t("enter_prereq"));
 		String prereqName = br.readLine();
-		for (Course c : Database.courses) {
-			if (c.getCourseName().equals(prereqName))
-				prereq = c;
-		}
-		
-		System.out.println("Enter course department: ");
-		String depName = br.readLine();
-		if (depName.equals("FIT")) type = FacultyType.FIT;
-		else if (depName.equals("BS")) type = FacultyType.BS;
-		else if (depName.equals("CCE")) type = FacultyType.CCE;
-		else if (depName.equals("FEOG")) type = FacultyType.FEOG;
-		else if (depName.equals("FGE")) type = FacultyType.FGE;
-		else if (depName.equals("FGGE")) type = FacultyType.FGGE;
-		else if (depName.equals("ISE")) type = FacultyType.ISE;
-		else if (depName.equals("KMA")) type = FacultyType.KMA;
-		else if (depName.equals("SMS")) type = FacultyType.SMS;
-		
-		if (manager.addCourse(new Course(courseName, period, courseCode, credit, isElective, studentLimit, prereq, type))) {
-			System.out.println("Course is successfully added!");
-		} else {
-			System.out.println("Course already exists.");
-		}
+		Course prereq = null;
+		for (Course c : Database.courses)
+			if (c.getCourseName().equals(prereqName)) prereq = c;
+
+		System.out.print(t("enter_dept"));
+		String depName = br.readLine().trim().toUpperCase();
+		FacultyType type = null;
+		try { type = FacultyType.valueOf(depName); } catch (IllegalArgumentException ignored) {}
+
+		if (manager.addCourse(new Course(courseName, period, courseCode, credit, isElective, studentLimit, prereq, type)))
+			System.out.println(t("course_added"));
+		else
+			System.out.println(t("course_exists"));
 	}
 
 	private static void removeCourse() throws IOException {
-		System.out.println("Enter course name: ");
-		String courseName = br.readLine();
-		for (Course c : Database.courses) {
-			if (c.getCourseName().equals(courseName)) {
-				if (manager.removeCourse(c)) {
-					System.out.println("Course is successfully removed!");
-				}
-				return;
-			}
-		}
-		System.out.println("Course is not in the Database!");
+		List<Course> list = new ArrayList<>(Database.courses);
+		if (list.isEmpty()) { System.out.println(t("no_courses")); return; }
+		System.out.println(t("pick_course"));
+		for (int i = 0; i < list.size(); i++)
+			System.out.printf(" %d) %s%n", i + 1, list.get(i).getCourseName());
+		System.out.print(t("pick_0_cancel"));
+		int idx;
+		try { idx = Integer.parseInt(br.readLine().trim()); } catch (NumberFormatException e) { idx = 0; }
+		if (idx < 1 || idx > list.size()) return;
+		if (manager.removeCourse(list.get(idx - 1)))
+			System.out.println(t("course_removed"));
 	}
-	
+
 	private static void addNews() throws IOException {
-		String title;
-		String text;
-		String postDate;
-		System.out.println("Enter news title: ");
-		title = br.readLine();
-		
-		System.out.println("Enter news text: ");
-		text = br.readLine();
-		
-		System.out.println("Enter news date: ");
-		postDate = br.readLine();
-		
-		if (manager.addNews(new News(title, text, postDate, NewsTopic.GENERAL, manager))) {
-			System.out.println("News is successfully added!");
-		}
+		System.out.print(t("enter_ntitle")); String title = br.readLine();
+		System.out.print(t("enter_ntext"));  String text  = br.readLine();
+		System.out.print(t("enter_ndate"));  String date  = br.readLine();
+		if (manager.addNews(new News(title, text, date, NewsTopic.GENERAL, manager)))
+			System.out.println(t("news_added"));
 	}
 
 	private static void removeNews() throws IOException {
-		System.out.println("Enter news title: ");
-		String title = br.readLine();
-
-		for (News n : Database.news) {
-			if (n.getTitle().equals(title)) {
-				if (manager.removeNews(n)) {
-					System.out.println("News is successfully removed!");
-				}
-				return;
-			}
-		}
-		System.out.println("News is not in the Database!");
+		if (Database.news.isEmpty()) { System.out.println(t("news_not_found")); return; }
+		System.out.println("News:");
+		List<News> list = new ArrayList<>(Database.news);
+		for (int i = 0; i < list.size(); i++)
+			System.out.printf(" %d) %s%n", i + 1, list.get(i).getTitle());
+		System.out.print(t("pick_0_cancel"));
+		int idx;
+		try { idx = Integer.parseInt(br.readLine().trim()); } catch (NumberFormatException e) { idx = 0; }
+		if (idx < 1 || idx > list.size()) return;
+		if (manager.removeNews(list.get(idx - 1)))
+			System.out.println(t("news_removed"));
 	}
 
 	private static void updateNews() throws IOException {
-		System.out.println("Enter old news title: ");
-		String title = br.readLine();
-		for (News n : Database.news) {
-			if (n.getTitle().equals(title)) {
-				System.out.println("Enter new news title: ");
-				String newTitle = br.readLine();
-				System.out.println("Enter new news text: ");
-				String newText = br.readLine();
-				System.out.println("Enter new news post date: ");
-				String newDate = br.readLine();
-				if (manager.updateNews(n, new News(newTitle, newText, newDate, n.getTopic(), manager))) {
-					System.out.println("News is updated!");
-				}
+		if (Database.news.isEmpty()) { System.out.println(t("news_not_found")); return; }
+		List<News> list = new ArrayList<>(Database.news);
+		System.out.println("News:");
+		for (int i = 0; i < list.size(); i++)
+			System.out.printf(" %d) %s%n", i + 1, list.get(i).getTitle());
+		System.out.print(t("pick_0_cancel"));
+		int idx;
+		try { idx = Integer.parseInt(br.readLine().trim()); } catch (NumberFormatException e) { idx = 0; }
+		if (idx < 1 || idx > list.size()) return;
+		News old = list.get(idx - 1);
+		System.out.print(t("enter_ntitle")); String newTitle = br.readLine();
+		System.out.print(t("enter_ntext"));  String newText  = br.readLine();
+		System.out.print(t("enter_ndate"));  String newDate  = br.readLine();
+		if (manager.updateNews(old, new News(newTitle, newText, newDate, old.getTopic(), manager)))
+			System.out.println(t("news_updated"));
+	}
+
+	private static void assignCourse() throws IOException {
+		List<Course> courses = new ArrayList<>(Database.courses);
+		List<Teacher> teachers = new ArrayList<>(Database.teachers);
+		if (courses.isEmpty() || teachers.isEmpty()) { System.out.println(t("no_assign_data")); return; }
+		System.out.println(t("pick_course"));
+		for (int i = 0; i < courses.size(); i++)
+			System.out.printf(" %d) %s%n", i + 1, courses.get(i).getCourseName());
+		System.out.print(t("pick_0_cancel"));
+		int ci;
+		try { ci = Integer.parseInt(br.readLine().trim()); } catch (NumberFormatException e) { ci = 0; }
+		if (ci < 1 || ci > courses.size()) return;
+		System.out.println(t("pick_teacher"));
+		for (int i = 0; i < teachers.size(); i++)
+			System.out.printf(" %d) %s%n", i + 1, teachers.get(i).getFullName());
+		System.out.print(t("pick_0_cancel"));
+		int ti;
+		try { ti = Integer.parseInt(br.readLine().trim()); } catch (NumberFormatException e) { ti = 0; }
+		if (ti < 1 || ti > teachers.size()) return;
+		if (manager.assignCoursesToTeachers(courses.get(ci - 1), teachers.get(ti - 1)))
+			System.out.println(t("assign_ok"));
+	}
+
+	private static void sendMessages() throws IOException {
+		System.out.print(t("enter_receiver"));
+		String name = br.readLine();
+		for (Employee e : Database.employees) {
+			if (e.getFullName().equals(name)) {
+				System.out.print(t("enter_msg_text"));
+				String text = br.readLine();
+				manager.sendMessage(e, new Message("General Message", text, manager, e, new Date().toString()));
+				System.out.println(t("msg_sent"));
 				return;
 			}
 		}
-		System.out.println("Oops, News is not in the Database!");
+		System.out.println(t("teacher_not_found"));
 	}
-	
-	private static void viewStudentsByName() {
-		System.out.println(manager.viewStudentsByName());
-	}
-	
-	private static void viewStudentsByGPA() {
-		System.out.println(manager.viewStudentsByGPA());
-	}
-	
-	private static void viewTeachers() {
-		System.out.println(manager.viewTeachersByName());
-	}
-	
-	private static void sendMessages() throws IOException {
-		String name;
-		System.out.println("Enter name of receiver: ");
-		name = br.readLine();
-		
-		for(Employee e : Database.employees) {
-			if (e.getFullName().equals(name)) {
-				String text;
-				System.out.println("Enter text: ");
-				text = br.readLine();
-				manager.sendMessage(e, new Message("General Message", text, manager, e, new Date().toString()));
-				System.out.println("Message is sended");
-			}
-		}
-	}
-	
-	private static void viewMessage() {
-		System.out.println(manager.getMessages());
-	}
-	
+
 	private static void exit() {
 		Database.save();
-		System.out.println("Bye bye");
+		System.out.println(t("menu_logout"));
 	}
-	
-	public static void run(User user) {
-		manager = (Manager)user;
-		br = new BufferedReader(new InputStreamReader(System.in));
+
+	public static void run(User user, BufferedReader brIn) {
+		manager = (Manager) user;
+		br = brIn;
 		try {
-			menu: while(true) {
-				System.out.println("What do you want to do?\n 1) Manage courses \n 2) Manage news  \n 3) Assign courses to teachers  \n 4) View students info \n 5) View teacher info \n 6) Send Messages \n 7) View Messages \n 8) Logout");
-				int choice = Integer.parseInt(br.readLine());
-				if (choice == 1) {
-					System.out.println("What do you want to do?\n - add course \n - remove course");
-					String operation = br.readLine();
-					if (operation.equals("add course")) {		
-						addCourse: while(true){		
-							addCourse();	
-							System.out.println("\n 1) Add another course  \n 2) Return back \n 3) Exit");
-							choice = Integer.parseInt(br.readLine());
-							if(choice == 1) continue addCourse;
-							if(choice == 2) continue menu;
-							if(choice == 3) {
-								exit();  
-								break menu;
-							}
-							break;
-						}
+			menu: while (true) {
+				System.out.println(t("manager_menu"));
+				System.out.print("Choice: ");
+				int choice = Integer.parseInt(br.readLine().trim());
+				switch (choice) {
+				case 1: {
+					System.out.println(t("courses_submenu"));
+					int op = Integer.parseInt(br.readLine().trim());
+					courses: while (true) {
+						if (op == 1) addCourse(); else removeCourse();
+						System.out.println(t("prompt_continue"));
+						int c = Integer.parseInt(br.readLine());
+						if (c == 1) continue courses;
+						if (c == 2) break courses;
+						exit(); break menu;
 					}
-					else if (operation.equals("remove course")) {
-						removeCourse: while(true) {
-							removeCourse();
-							System.out.println("\n 1) Remove another course  \n 2) Return back \n 3) Exit");
-							choice = Integer.parseInt(br.readLine());
-							if(choice == 1) continue removeCourse;
-							if(choice == 2) continue menu;
-							if(choice == 3) {
-								exit();  
-								break menu;
-							}
-							break;
-						}
-					}	
+					break;
 				}
-				else if (choice == 2) {
-					System.out.println("What do you want to do?\n - add news \n - remove news \n - update news");
-					String operation = br.readLine();
-					if (operation.equals("add news")) {
-						addNews: while(true) {
-							addNews();
-							System.out.println("\n 1) Add another news  \n 2) Return back \n 3) Exit");
-							choice = Integer.parseInt(br.readLine());
-							if(choice == 1) continue addNews;
-							if(choice == 2) continue menu;
-							if(choice == 3) {
-								exit();  
-								break menu;
-							}
-							break;
-						}
+				case 2: {
+					System.out.println(t("news_submenu"));
+					int op = Integer.parseInt(br.readLine().trim());
+					news: while (true) {
+						if (op == 1) addNews();
+						else if (op == 2) removeNews();
+						else updateNews();
+						System.out.println(t("prompt_continue"));
+						int c = Integer.parseInt(br.readLine());
+						if (c == 1) continue news;
+						if (c == 2) break news;
+						exit(); break menu;
 					}
-					else if (operation.equals("remove news")) {
-						removeNews: while(true) {
-							removeNews();
-							System.out.println("\n 1) Remove another news  \n 2) Return back \n 3) Exit");
-							choice = Integer.parseInt(br.readLine());
-							if(choice == 1) continue removeNews;
-							if(choice == 2) continue menu;
-							if(choice == 3) {
-								exit();  
-								break menu;
-							}
-							break;
-						}
-					}
-					else {
-						updateNews: while(true) {
-							updateNews();
-							System.out.println("\n 1) Update another news  \n 2) Return back \n 3) Exit");
-							choice = Integer.parseInt(br.readLine());
-							if(choice == 1) continue updateNews;
-							if(choice == 2) continue menu;
-							if(choice == 3) {
-								exit();  
-								break menu;
-							}
-							break;
-						}
-					}
+					break;
 				}
-				else if (choice == 3) {
-					assignCourse: while(true) {
-						System.out.println("\n Enter the course name: ");
-						String courseName = br.readLine();
-						System.out.println("\n Enter the teacher's name: ");
-						String teacherName = br.readLine();
-						
-						for (Course c : Database.courses) {
-							if (c.getCourseName().equals(courseName)) {
-								for (Teacher t : Database.teachers) {
-									if (t.getFullName().equals(teacherName)) {
-										if (manager.assignCoursesToTeachers(c, t)) {
-											System.out.println("\n Assigned successfully!");
-										}
-									}
-								}
-							}
-						}
-						System.out.println("\n 1) Assign another course \n 2) Return back \n 3) Exit");
-						choice = Integer.parseInt(br.readLine());
-						if(choice == 1) continue assignCourse;
-						if(choice == 2) continue menu;
-						if(choice == 3) {
-							exit();  
-							break menu;
-						}
-						break;
+				case 3: {
+					assign: while (true) {
+						assignCourse();
+						System.out.println(t("prompt_continue"));
+						int c = Integer.parseInt(br.readLine());
+						if (c == 1) continue assign;
+						if (c == 2) break assign;
+						exit(); break menu;
 					}
+					break;
 				}
-				else if (choice == 4) {
-					studentInfo: while(true) {
-						System.out.println("View \n - by names \n - by gpa");
-						String operation = br.readLine();
-						
-						if (operation.equals("by names")) {
-							viewStudentsByName();
-									
-						}
-						else if (operation.equals("by gpa")) {
-								viewStudentsByGPA();
-						}
-						System.out.println("\n 1) View another info \n 2) Return back \n 3) Exit");
-						choice = Integer.parseInt(br.readLine());
-						if(choice == 1) continue studentInfo;
-						if(choice == 2) continue menu;	
-						if(choice == 3) {
-							exit();  
-							break menu;
-						}
-						break;		
-						
+				case 4: {
+					System.out.println(t("students_submenu"));
+					int op = Integer.parseInt(br.readLine().trim());
+					students: while (true) {
+						if (op == 1) System.out.println(manager.viewStudentsByName());
+						else System.out.println(manager.viewStudentsByGPA());
+						System.out.println(t("prompt_continue"));
+						int c = Integer.parseInt(br.readLine());
+						if (c == 1) continue students;
+						if (c == 2) break students;
+						exit(); break menu;
 					}
+					break;
 				}
-				else if (choice == 5) {
-					teacherInfo: while(true) {
-						viewTeachers();
-						
-						System.out.println("\n 1) View another info \n 2) Return back \n 3) Exit");
-						choice = Integer.parseInt(br.readLine());
-						if(choice == 1) continue teacherInfo;
-						if(choice == 2) continue menu;	
-						if(choice == 3) {
-							exit();  
-							break menu;
-						}
-						break;		
-					
+				case 5: {
+					teachers: while (true) {
+						System.out.println(manager.viewTeachersByName());
+						System.out.println(t("back_exit"));
+						int c = Integer.parseInt(br.readLine());
+						if (c == 1) break teachers;
+						exit(); break menu;
 					}
-				
+					break;
 				}
-				else if (choice == 6) {
-					sendMessage: while(true) {
+				case 6: {
+					msg: while (true) {
 						sendMessages();
-						
-						System.out.println("\n 1) Send another message \n 2) Return back \n 3) Exit");
-						choice = Integer.parseInt(br.readLine());
-						if(choice == 1) continue sendMessage;
-						if(choice == 2) continue menu;
-						if(choice == 3) {
-							exit();  
-							break menu;
-						}
-						break;
+						System.out.println(t("prompt_continue"));
+						int c = Integer.parseInt(br.readLine());
+						if (c == 1) continue msg;
+						if (c == 2) break msg;
+						exit(); break menu;
 					}
+					break;
 				}
-				else if (choice == 7) {
-					viewMessage: while(true) {
-						viewMessage();
-						
-						System.out.println("\n 1) View message \n 2) Return back \n 3) Exit");
-						choice = Integer.parseInt(br.readLine());
-						if(choice == 1) continue viewMessage;
-						if(choice == 2) continue menu;
-						if(choice == 3) {
-							exit();  
-							break menu;
-						}
-						break;
-					}
+				case 7: {
+					Object msgs = manager.getMessages();
+					System.out.println(msgs == null || msgs.toString().isBlank() ? t("no_messages") : msgs);
+					System.out.println(t("back_exit"));
+					if (Integer.parseInt(br.readLine()) != 1) { exit(); break menu; }
+					break;
 				}
-				else {
+				default:
 					exit();
 					break menu;
 				}
 			}
-		}
-		catch(Exception e) {
-			System.out.println("Something bad happened... \n Saving resources...");
+		} catch (Exception e) {
+			System.out.println("Error: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
-
-
 }
